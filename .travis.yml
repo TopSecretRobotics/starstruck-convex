@@ -1,0 +1,25 @@
+language: generic
+
+sudo: required
+
+services:
+  - docker
+
+notifications:
+  email: false
+
+cache:
+  directories:
+    - docker-convex
+
+before_install:
+  -
+    if [ -e "docker-convex/image.tar" ]; then
+      docker load -i "docker-convex/image.tar";
+    else
+      docker build -t "docker-convex" -f Dockerfile .;
+      mkdir -p "docker-convex"; docker save -o "docker-convex/image.tar" "docker-convex";
+    fi
+
+script:
+  - docker run -v `pwd`:/build/project "docker-convex" sh -c 'cd project && make'
