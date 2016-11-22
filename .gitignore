@@ -1,2 +1,8 @@
-/.dep
-/bin
+/app/.dep
+/app/bin
+/ChibiOS_2.6.2
+/convex
+/deps
+!/deps/jpearman/.keep
+!/deps/jpearman/convex
+!/deps/setup.sh
