@@ -63,17 +63,16 @@ static vexDigiCfg dConfig[kVexDigital_Num] = {
     {kVexDigital_12, kVexSensorDigitalInput, kVexConfigInput, 0}};
 
 static vexMotorCfg mConfig[kVexMotorNum] = {
-    {kVexMotor_1, kVexMotor393T, kVexMotorNormal, kVexSensorIME, kImeChannel_1},
-    {kVexMotor_2, kVexMotorUndefined, kVexMotorNormal, kVexSensorNone, 0},
-    {kVexMotor_3, kVexMotorUndefined, kVexMotorNormal, kVexSensorNone, 0},
-    {kVexMotor_4, kVexMotorUndefined, kVexMotorNormal, kVexSensorNone, 0},
-    {kVexMotor_5, kVexMotorUndefined, kVexMotorNormal, kVexSensorNone, 0},
-    {kVexMotor_6, kVexMotorUndefined, kVexMotorNormal, kVexSensorNone, 0},
-    {kVexMotor_7, kVexMotorUndefined, kVexMotorNormal, kVexSensorNone, 0},
-    {kVexMotor_8, kVexMotorUndefined, kVexMotorNormal, kVexSensorNone, 0},
-    {kVexMotor_9, kVexMotorUndefined, kVexMotorNormal, kVexSensorNone, 0},
-    {kVexMotor_10, kVexMotor393T, kVexMotorNormal, kVexSensorIME,
-     kImeChannel_2}};
+    {kVexMotor_1, kVexMotorUndefined, kVexMotorNormal, kVexSensorNone, 0},
+    {kVexMotor_2, kVexMotor393T, kVexMotorReversed, kVexSensorNone, 0},
+    {kVexMotor_3, kVexMotor393T, kVexMotorNormal, kVexSensorNone, 0},
+    {kVexMotor_4, kVexMotor393T, kVexMotorReversed, kVexSensorNone, 0},
+    {kVexMotor_5, kVexMotor393T, kVexMotorNormal, kVexSensorNone, 0},
+    {kVexMotor_6, kVexMotor393T, kVexMotorNormal, kVexSensorNone, 0},
+    {kVexMotor_7, kVexMotor393T, kVexMotorNormal, kVexSensorNone, 0},
+    {kVexMotor_8, kVexMotor393T, kVexMotorNormal, kVexSensorNone, 0},
+    {kVexMotor_9, kVexMotor393T, kVexMotorNormal, kVexSensorNone, 0},
+    {kVexMotor_10, kVexMotorUndefined, kVexMotorNormal, kVexSensorNone, 0}};
 
 /*-----------------------------------------------------------------------------*/
 /** @brief      User setup */
@@ -116,8 +115,14 @@ msg_t vexAutonomous(void *arg) {
   return (msg_t)0;
 }
 
-#define MotorDriveL kVexMotor_1
-#define MotorDriveR kVexMotor_10
+#define frontRDrive kVexMotor_2
+#define frontLDrive kVexMotor_3
+#define backRDrive kVexMotor_4
+#define backLDrive kVexMotor_5
+#define lowerRArm kVexMotor_6
+#define lowerLArm kVexMotor_7
+#define middleArm kVexMotor_8
+#define topArm kVexMotor_9
 
 /*-----------------------------------------------------------------------------*/
 /** @brief      Driver control */
@@ -126,8 +131,6 @@ msg_t vexAutonomous(void *arg) {
  *  This thread is started when the driver control period is started
  */
 msg_t vexOperator(void *arg) {
-  int16_t blink = 0;
-
   (void)arg;
 
   // Must call this
@@ -135,24 +138,62 @@ msg_t vexOperator(void *arg) {
 
   // Run until asked to terminate
   while (!chThdShouldTerminate()) {
-    // flash led/digi out
-    vexDigitalPinSet(kVexDigital_1, (blink++ >> 3) & 1);
+    vexMotorSet(frontRDrive, vexControllerGet(Ch3));
+    vexMotorSet(frontLDrive, vexControllerGet(Ch3));
+    vexMotorSet(backRDrive, vexControllerGet(Ch3));
+    vexMotorSet(backLDrive, vexControllerGet(Ch3));
 
-    // status on LCD of encoder and sonar
-    vexLcdPrintf(VEX_LCD_DISPLAY_2, VEX_LCD_LINE_1, "%4.2fV   %8.1f",
-                 vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0);
-    vexLcdPrintf(VEX_LCD_DISPLAY_2, VEX_LCD_LINE_2, "L %3d R %3d",
-                 vexMotorGet(MotorDriveL), vexMotorGet(MotorDriveR));
+    vexMotorSet(frontRDrive, vexControllerGet(Ch3) + vexControllerGet(Ch1));
+    vexMotorSet(frontLDrive, vexControllerGet(Ch3) - vexControllerGet(Ch1));
+    vexMotorSet(backRDrive, vexControllerGet(Ch3) + vexControllerGet(Ch1));
+    vexMotorSet(backLDrive, vexControllerGet(Ch3) - vexControllerGet(Ch1));
 
-    // Tank drive
-    // left drive
-    vexMotorSet(MotorDriveL, vexControllerGet(Ch3));
+    vexMotorSet(frontRDrive, vexControllerGet(Ch3) - vexControllerGet(Ch1) - vexControllerGet(Ch4));
+    vexMotorSet(frontLDrive, vexControllerGet(Ch3) + vexControllerGet(Ch1) + vexControllerGet(Ch4));
+    vexMotorSet(backRDrive, vexControllerGet(Ch3) + vexControllerGet(Ch1) - vexControllerGet(Ch4));
+    vexMotorSet(backLDrive, vexControllerGet(Ch3) - vexControllerGet(Ch1) + vexControllerGet(Ch4));
 
-    // right drive
-    vexMotorSet(MotorDriveR, vexControllerGet(Ch2));
+    if (vexControllerGet(Btn6U)) {
+      vexMotorSet(lowerLArm, 127);
+      vexMotorSet(lowerRArm, 127);
+    }
+
+    if (vexControllerGet(Btn6D)) {
+      vexMotorSet(lowerLArm, -127);
+      vexMotorSet(lowerRArm, -127);
+    }
+
+    if (vexControllerGet(Btn5U)) {
+      vexMotorSet(middleArm, 127);
+    }
+
+    if (vexControllerGet(Btn5D)) {
+      vexMotorSet(middleArm, -127);
+    }
+
+    if (!vexControllerGet(Btn6U) && !vexControllerGet(Btn6D)) {
+      vexMotorSet(lowerLArm, 0);
+      vexMotorSet(lowerRArm, 0);
+    }
+
+    if (vexControllerGet(Btn5U)) {
+      vexMotorSet(topArm, 127);
+    }
+
+    if (vexControllerGet(Btn5D)) {
+      vexMotorSet(topArm, -127);
+    }
+
+    if (vexControllerGet(Btn5U)) {
+      vexMotorSet(topArm, 127);
+    }
+
+    if (!vexControllerGet(Btn5U) && !vexControllerGet(Btn5D)) {
+      vexMotorSet(middleArm, 127);
+    }
 
     // Don't hog cpu
-    vexSleep(25);
+    vexSleep(20);
   }
 
   return (msg_t)0;
