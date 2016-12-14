@@ -1,4 +1,4 @@
-.PHONY: all app deps
+.PHONY: all app clean deps
 
 # Verbosity.
 
@@ -36,22 +36,26 @@ export CONVEX_DIR
 
 # Core targets.
 
-all:: deps app
+# all:: deps app
+all:: app
 
-ifneq ($(wildcard $(CONVEX_DIR)),)
+clean::
+	$(MAKE) -C src clean
 
-deps:: 
+# ifneq ($(wildcard $(CONVEX_DIR)),)
 
-else
+deps::
 
-deps:: $(CONVEX_DIR)
+# else
 
-endif
+# deps:: $(CONVEX_DIR)
 
-$(CONVEX_DIR):
-	$(verbose) git submodule update --init --recursive
-	$(verbose) (test -d "$(CURDIR)/ChibiOS_2.6.2" || unzip -q "$(DEPS_DIR)/jpearman/convex/ChibiOS_2.6.2.zip" -d "$(CURDIR)")
-	$(verbose) ln -svf "deps/jpearman/convex/convex" "$(CONVEX_DIR)"
+# endif
+
+# $(CONVEX_DIR):
+# 	$(verbose) git submodule update --init --recursive
+# 	$(verbose) (test -d "$(CURDIR)/ChibiOS_2.6.2" || unzip -q "$(DEPS_DIR)/jpearman/convex/ChibiOS_2.6.2.zip" -d "$(CURDIR)")
+# 	$(verbose) ln -svf "deps/jpearman/convex/convex" "$(CONVEX_DIR)"
 
 app::
-	$(MAKE) -C app
+	$(MAKE) -C src
