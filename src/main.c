@@ -50,6 +50,9 @@
 
 #include "smartmotor.h"
 #include "apollo.h"
+#include "pidlib.h"
+
+#include "claw.h"
 
 /*-----------------------------------------------------------------------------*/
 /* Command line related.                                                       */
@@ -81,6 +84,42 @@ cmd_sm(vexStream *chp, int argc, char *argv[])
 	SmartMotorDebugStatus();
 }
 
+static void
+vex_pid_debug(pidController *p)
+{
+	vex_printf("\tEnabled:    %d\r\n", p->enabled);
+	vex_printf("\tKp:         %f\r\n", p->Kp);
+	vex_printf("\tKi:         %f\r\n", p->Ki);
+	vex_printf("\tKd:         %f\r\n", p->Kd);
+	vex_printf("\tKbias:      %f\r\n", p->Kbias);
+	vex_printf("\tError:      %f\r\n", p->error);
+	vex_printf("\tLast Error: %f\r\n", p->last_error);
+	vex_printf("\tIntegral:   %f\r\n", p->integral);
+	vex_printf("\tLimit (I):  %f\r\n", p->integral_limit);
+	vex_printf("\tDerivative: %f\r\n", p->derivative);
+	vex_printf("\tThreshold:  %f\r\n", p->error_threshold);
+	vex_printf("\tDrive:      %f\r\n", p->drive);
+	vex_printf("\tDrive Raw:  %d\r\n", p->drive_raw);
+	vex_printf("\tDrive Cmd:  %d\r\n", p->drive_cmd);
+	vex_printf("\tReverse:    %d\r\n", p->sensor_reverse);
+	vex_printf("\tSensor:     %d\r\n", p->sensor_value);
+	vex_printf("\tTarget:     %d\r\n", p->target_value);
+	return;
+}
+
+static void
+cmd_claw(vexStream *chp, int argc, char *argv[])
+{
+	(void)argv;
+	(void)chp;
+	(void)argc;
+
+	vex_printf("Claw Lock PID\r\n");
+	vex_pid_debug(clawGetPtr()->lock);
+
+	return;
+}
+
 #define SHELL_WA_SIZE THD_WA_SIZE(512)
 
 // Shell command
@@ -95,6 +134,7 @@ static const ShellCommand commands[] = {
 	{"test",    vexTestDebug},
 	{"sm",      cmd_sm},
 	{"apollo",  cmd_apollo},
+	{"claw",    cmd_claw},
 	{NULL, NULL}
 };
 
@@ -121,10 +161,13 @@ int main(void)
 	halInit();
 	chSysInit();
 
+	// Set the Team Name
+	vexSpiTeamnameSet("TopSecret");
+
 	// Init the serial port associated with the console
 	vexConsoleInit();
 
-	// init VEX
+	// Init VEX
 	vexCortexInit();
 
 	// wait for good spi comms
@@ -140,7 +183,7 @@ int main(void)
 	// Shell manager initialization.
 	shellInit();
 
-	// spin in loop monitoring the shell
+	// Spin in loop monitoring the shell
 	while (TRUE) {
 		if (!shelltp) {
 			shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);

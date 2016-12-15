@@ -1,10 +1,10 @@
-# ConVEX skeleton project
+# Starstruck ConVEX project
 
 Usage with docker:
 
 ```bash
-docker build -t "docker-convex" -f Dockerfile .
-docker run -v `pwd`:/build "docker-convex" sh -c 'make'
+docker build -t "starstruck-convex" -f Dockerfile .
+docker run --rm -v `pwd`:/build "starstruck-convex" make
 ```
 
 Usage with docker-compose:

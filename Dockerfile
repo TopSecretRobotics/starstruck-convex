@@ -1,7 +1,8 @@
 FROM ubuntu:yakkety
 
+# Add dependencies
 RUN apt-get update && \
-    apt-get -y install unzip git make gcc-arm-none-eabi
+    apt-get -y install make gcc-arm-none-eabi
 
 RUN mkdir /build
 WORKDIR /build
