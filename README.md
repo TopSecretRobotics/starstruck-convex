@@ -1,5 +1,7 @@
 # Starstruck ConVEX project
 
+[![Build Status](https://travis-ci.org/TopSecretRobotics/starstruck-convex.svg?branch=master)](https://travis-ci.org/TopSecretRobotics/starstruck-convex)
+
 This project expects [PROS](http://pros.cs.purdue.edu/) to be installed and available in the `PATH`.
 
 The project may be built by running:

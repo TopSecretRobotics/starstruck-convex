@@ -10,16 +10,16 @@ notifications:
 
 cache:
   directories:
-    - docker-convex
+    - starstruck-convex
 
 before_install:
   -
-    if [ -e "docker-convex/image.tar" ]; then
-      docker load -i "docker-convex/image.tar";
+    if [ -e "starstruck-convex/image.tar" ]; then
+      docker load -i "starstruck-convex/image.tar";
     else
-      docker build -t "docker-convex" -f Dockerfile .;
-      mkdir -p "docker-convex"; docker save -o "docker-convex/image.tar" "docker-convex";
+      docker build -t "starstruck-convex" -f Dockerfile .;
+      mkdir -p "starstruck-convex"; docker save -o "starstruck-convex/image.tar" "starstruck-convex";
     fi
 
 script:
-  - docker run -v `pwd`:/build/project "docker-convex" sh -c 'cd project && make'
+  - docker run -v `pwd`:/build "starstruck-convex" sh -c 'make'
