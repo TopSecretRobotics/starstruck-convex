@@ -1,5 +1,21 @@
 # Starstruck ConVEX project
 
+This project expects [PROS](http://pros.cs.purdue.edu/) to be installed and available in the `PATH`.
+
+The project may be built by running:
+
+```bash
+make
+```
+
+And sent to the Cortex by running:
+
+```bash
+make flash
+```
+
+#### Docker
+
 Usage with docker:
 
 ```bash
