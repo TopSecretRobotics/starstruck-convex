@@ -1,4 +1,4 @@
-.PHONY: all app clean deps flash lsusb
+.PHONY: all app clean deps flash lsusb shell
 
 # Verbosity.
 
@@ -61,10 +61,25 @@ ifeq ($(VEX_DEVICE),)
 flash::
 	$(error No device found. Connect USB device or specify with VEX_DEVICE environment variable)
 
+shell::
+	$(error No device found. Connect USB device or specify with VEX_DEVICE environment variable)
+
 else
 
 flash::
 	-$(verbose) $(CORTEXFLASH) -X -w $(CURDIR)/bin/output.hex -v -g 0x0 $(VEX_DEVICE)
+
+ifeq ($(PLATFORM),windows)
+
+shell::
+	$(error You will need to use PuTTY to connect to device $(VEX_DEVICE) at speed 115200)
+
+else
+
+shell::
+	$(verbose) screen $(VEX_DEVICE) 115200
+
+endif
 
 endif
 

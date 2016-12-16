@@ -53,6 +53,7 @@
 #include "pidlib.h"
 
 #include "claw.h"
+#include "wrist.h"
 
 /*-----------------------------------------------------------------------------*/
 /* Command line related.                                                       */
@@ -120,6 +121,25 @@ cmd_claw(vexStream *chp, int argc, char *argv[])
 	return;
 }
 
+static void
+cmd_wrist(vexStream *chp, int argc, char *argv[])
+{
+	(void)argv;
+	(void)chp;
+	(void)argc;
+
+	wrist_t *w = wristGetPtr();
+	vex_printf("Wrist\r\n");
+	vex_printf("\tReversed:      %d\r\n", w->reversed);
+	vex_printf("\tGear Ratio:    %f\r\n", w->gearRatio);
+	vex_printf("\tRest:          %d\r\n", w->restValue);
+	vex_printf("\tRest Inverted: %d\r\n", w->restInvertedValue);
+	vex_printf("Wrist Lock PID\r\n");
+	vex_pid_debug(w->lock);
+
+	return;
+}
+
 #define SHELL_WA_SIZE THD_WA_SIZE(512)
 
 // Shell command
@@ -135,6 +155,7 @@ static const ShellCommand commands[] = {
 	{"sm",      cmd_sm},
 	{"apollo",  cmd_apollo},
 	{"claw",    cmd_claw},
+	{"wrist",   cmd_wrist},
 	{NULL, NULL}
 };
 

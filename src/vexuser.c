@@ -48,6 +48,8 @@
 
 #include "smartmotor.h"
 #include "drive.h"
+#include "arm.h"
+#include "wrist.h"
 #include "claw.h"
 
 // Digital I/O configuration
@@ -73,8 +75,7 @@ static vexMotorCfg mConfig[kVexMotorNum] = {
 	{ kVexMotor_3,		kVexMotor393T,			kVexMotorNormal,		kVexSensorNone,			0 },
 	{ kVexMotor_4,		kVexMotor393T,			kVexMotorNormal,		kVexSensorNone,			0 },
 	{ kVexMotor_5,		kVexMotorUndefined,		kVexMotorNormal,		kVexSensorNone,			0 },
-	// { kVexMotor_6,		kVexMotor393T,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_1 },
-	{ kVexMotor_6,		kVexMotor393T,			kVexMotorNormal,		kVexSensorNone,			0 },
+	{ kVexMotor_6,		kVexMotor393T,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_1 },
 	{ kVexMotor_7,		kVexMotor393T,			kVexMotorNormal,		kVexSensorNone,			0 },
 	{ kVexMotor_8,		kVexMotor393T,			kVexMotorNormal,		kVexSensorNone,			0 },
 	{ kVexMotor_9,		kVexMotor393T,			kVexMotorReversed,		kVexSensorNone,			0 },
@@ -98,27 +99,32 @@ vexUserSetup()
 		kVexMotor_10,			// drive southeast or back-right motor
 		kVexMotor_1				// drive southwest or back-left motor
 	);
-	// armSetup(
-	// 	kVexMotor_8,			// arm top motor
-	// 	kVexMotor_7,			// arm middle motor
-	// 	kVexMotor_3,			// arm bottom motor
-	// 	kVexAnalog_1,			// arm potentiometer
-	// 	FALSE,					// reversed potentiometer (values decrease with positive motor speed)
-	// 	(36.0 / 12.0 / 84.0),	// gear ratio (1:28 or ~214 ticks per rotation)
-	// 	4090,					// resting potentiometer value
-	// 	1940					// resting potentiometer value (inverted)
-	// );
-	// wristSetup(
-	// 	kVexMotor_6,			// wrist motor
-	// 	kVexAnalog_2,			// wrist potentiometer
-	// 	FALSE,					// reversed potentiometer (values decrease with positive motor speed)
-
-	// );
+	// Arm Gearing: https://goo.gl/1UD1ne
+	armSetup(
+		kVexMotor_8,			// arm top motor pair
+		kVexMotor_7,			// arm middle motor pair
+		kVexMotor_3,			// arm bottom motor pair
+		kVexAnalog_1,			// arm potentiometer
+		FALSE,					// reversed potentiometer (values decrease with positive motor speed)
+		(1.0 / 7.0),			// gear ratio (1:7 or ~857 ticks per rotation)
+		4090,					// resting potentiometer value
+		1940					// resting potentiometer value (inverted)
+	);
+	// Wrist Gearing: https://goo.gl/3fK0Mk
+	wristSetup(
+		kVexMotor_6,			// wrist motor
+		kVexAnalog_2,			// wrist potentiometer
+		TRUE,					// reversed potentiometer (values decrease with positive motor speed)
+		(1.0 / 3.0),			// gear ratio (1:3 or ~2000 ticks per revolution)
+		3170,					// resting potentiometer value
+		620						// resting potentiometer value (inverted)
+	);
+	// Claw Gearing: https://goo.gl/g99rX1
 	clawSetup(
 		kVexMotor_4,			// claw motor
 		kVexAnalog_3,			// claw potentiometer
 		TRUE,					// reversed potentiometer (values decrease with positive motor speed)
-		(12.0 / 84.0),			// gear ratio (1:7 or ~857 ticks per rotation)
+		(1.0 / 7.0),			// gear ratio (1:7 or ~857 ticks per rotation)
 		2540,					// grab potentiometer value
 		1800					// open potentiometer value
 	);
@@ -140,6 +146,8 @@ vexUserInit()
 	SmartMotorCurrentMonitorEnable();
 	// TODO: figure out the other two motors plugged into the extender
 	SmartMotorsAddPowerExtender(kVexMotor_2, kVexMotor_9);
+	armInit();
+	wristInit();
 	clawInit();
 	SmartMotorRun();
 }
@@ -170,6 +178,7 @@ vexAutonomous( void *arg )
 // #define MotorDriveR     kVexMotor_10
 // #define MotorWheel kVexMotor_2
 // #define MotorClaw kVexMotor_3
+// #define MotorWrist kVexMotor_6
 
 /*-----------------------------------------------------------------------------*/
 /** @brief      Driver control                                                 */
@@ -188,7 +197,9 @@ vexOperator( void *arg )
 	vexTaskRegister("operator");
 
 	// driveStart();
-	clawStart();
+	armStart();
+	wristStart();
+	// clawStart();
 
 	// Run until asked to terminate
 	while (!chThdShouldTerminate()) {
@@ -197,14 +208,15 @@ vexOperator( void *arg )
 
 		// status on LCD of encoder and sonar
 		vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
-		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "motor speed %3d", vexMotorGet( MotorClaw ) );
+		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "motor speed %3d", vexMotorGet( kVexMotor_6 ) );
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "claw pot %4d", vexAdcGet( clawGetPtr()->potentiometer ) );
-		vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "wrist pot %4d", vexAdcGet( clawGetPtr()->potentiometer ) );
+		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "wrist pot %4d", vexAdcGet( kVexAnalog_2 ) );
 
 		// Tank drive
 		// left drive
 		// SetMotor( MotorWheel, vexControllerGet( Ch3 ) );
 		// SetMotor( MotorClaw, vexControllerGet( Ch3 ) );
+		// SetMotor( MotorWrist, vexControllerGet( Ch3 ) );
 		// SetMotor( MotorWheel, 127 );
 		// vexMotorSet( MotorWheel, 127 );
 

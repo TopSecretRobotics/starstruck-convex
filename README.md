@@ -16,6 +16,18 @@ And sent to the Cortex by running:
 make flash
 ```
 
+#### Shell
+
+On macOS and Linux, you can connect to the device's terminal by running:
+
+```bash
+make shell
+```
+
+To exit, press `CTRL+A, CTRL+\` and type `y`.
+
+On Windows, you will need to download [PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html) and run `make lsusb` to see which device to connect to at speed 115200.
+
 #### Docker
 
 Usage with docker:

@@ -16,6 +16,7 @@ static WORKING_AREA(waClaw, 512);
 
 // private functions
 static msg_t	clawThread(void *arg);
+static void		clawPIDUpdate(int16_t *cmd);
 
 // claw speed adjustment
 #define USE_CLAW_SPEED_TABLE 1
@@ -101,11 +102,8 @@ void
 clawInit(void)
 {
 	SmartMotorSetRpmSensor(claw.motor, claw.potentiometer, 6000 * claw.gearRatio, claw.reversed);
-	// claw.lock = PidControllerInit(0.004, 0.0, 0.01, (tVexSensors) claw.potentiometer, 0);
-	claw.lock = PidControllerInit(0.004, 0.0, 0.01, kVexSensorUndefined, 0);
+	claw.lock = PidControllerInit(0.004, 0.0001, 0.01, kVexSensorUndefined, 0);
 	claw.lock->enabled = 0;
-	// claw.lock->error_threshold = 25;
-	 // float Kp, float Ki, float Kd, tVexSensors port, int16_t sensor_reverse );
 	return;
 }
 
@@ -139,22 +137,15 @@ clawThread(void *arg)
 		clawCmd = clawSpeed( vexControllerGet( Ch2 ) );
 
 		if (clawCmd == 0) {
-			// enable PID if not driving and already disabled
-			if (claw.lock->enabled == 0) {
-				claw.lock->enabled = 1;
-				claw.lock->target_value = vexAdcGet( claw.potentiometer );
-			}
+			// claw open and close
 			if (vexControllerGet( Btn6U ) && !vexControllerGet( Btn6D )) {
+				claw.lock->enabled = 1;
 				claw.lock->target_value = claw.grabValue;
 			} else if (!vexControllerGet( Btn6U ) && vexControllerGet( Btn6D )) {
+				claw.lock->enabled = 1;
 				claw.lock->target_value = claw.openValue;
 			}
-			claw.lock->sensor_value = vexAdcGet( claw.potentiometer );
-			claw.lock->error =
-				(claw.reversed)
-				? (claw.lock->sensor_value - claw.lock->target_value)
-				: (claw.lock->target_value - claw.lock->sensor_value);
-			clawCmd = clawSpeed( PidControllerUpdate( claw.lock ) );
+			clawPIDUpdate(&clawCmd);
 		} else {
 			// disable PID if driving
 			claw.lock->enabled = 0;
@@ -168,4 +159,38 @@ clawThread(void *arg)
 	}
 
 	return ((msg_t) 0);
+}
+
+static void
+clawPIDUpdate(int16_t *cmd)
+{
+	// enable PID if not driving and already disabled
+	if (claw.lock->enabled == 0) {
+		claw.lock->enabled = 1;
+		claw.lock->target_value = vexAdcGet( claw.potentiometer );
+	}
+	// prevent PID from trying to lock outside bounds
+	if (claw.reversed) {
+		if (claw.lock->target_value > claw.grabValue)
+			claw.lock->target_value = claw.grabValue;
+		else if (claw.lock->target_value < claw.openValue)
+			claw.lock->target_value = claw.openValue;
+	} else {
+		if (claw.lock->target_value < claw.grabValue)
+			claw.lock->target_value = claw.grabValue;
+		else if (claw.lock->target_value > claw.openValue)
+			claw.lock->target_value = claw.openValue;
+	}
+	claw.lock->sensor_value = vexAdcGet( claw.potentiometer );
+	claw.lock->error =
+		(claw.reversed)
+		? (claw.lock->sensor_value - claw.lock->target_value)
+		: (claw.lock->target_value - claw.lock->sensor_value);
+	*cmd = PidControllerUpdate( claw.lock );
+	// limit output if error is small
+	if (fabs(claw.lock->error) < 50) {
+		*cmd = *cmd / 2;
+	}
+	*cmd = clawSpeed( *cmd );
+	return;
 }
