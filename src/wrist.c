@@ -186,12 +186,11 @@ wristPIDUpdate(int16_t *cmd)
 		: (wrist.lock->target_value - wrist.lock->sensor_value);
 	*cmd = PidControllerUpdate( wrist.lock );
 	// limit output if error is small
-	// if (fabs(wrist.lock->error) < 100) {
-	// 	*cmd = *cmd / 10;
-	// } else if (fabs(wrist.lock->error) < 300) {
-	// 	*cmd = *cmd / 5;
-	// } else
-	if (fabs(wrist.lock->error) < 700) {
+	if (fabs(wrist.lock->error) < 100) {
+		*cmd = *cmd / 10;
+	} else if (fabs(wrist.lock->error) < 300) {
+		*cmd = *cmd / 5;
+	} else if (fabs(wrist.lock->error) < 700) {
 		*cmd = *cmd / 2;
 	}
 	*cmd = wristSpeed( *cmd );
