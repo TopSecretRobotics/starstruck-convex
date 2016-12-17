@@ -135,6 +135,7 @@ static msg_t
 armThread(void *arg)
 {
 	int16_t armCmd = 0;
+	bool_t immediate = FALSE;
 
 	// Unused
 	(void) arg;
@@ -148,6 +149,7 @@ armThread(void *arg)
 		// (void) armPIDUpdate;
 
 		if (armCmd == 0) {
+			immediate = FALSE;
 			if (vexControllerGet( Btn6D )) {
 				arm.lock->enabled = 1;
 				arm.lock->target_value = arm.restValue;
@@ -155,14 +157,15 @@ armThread(void *arg)
 			armPIDUpdate(&armCmd);
 			// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "error %f", arm.lock->error);
 		} else {
+			immediate = TRUE;
 			// disable PID if driving
 			arm.lock->enabled = 0;
 			PidControllerUpdate( arm.lock ); // zero out PID
 		}
 
-		SetMotor( arm.topMotorPair, armCmd );
-		SetMotor( arm.middleMotorPair, armCmd );
-		SetMotor( arm.bottomMotorPair, armCmd );
+		SetMotor( arm.topMotorPair, armCmd, immediate );
+		SetMotor( arm.middleMotorPair, armCmd, immediate );
+		SetMotor( arm.bottomMotorPair, armCmd, immediate );
 
 		// Don't hog cpu
 		vexSleep(25);

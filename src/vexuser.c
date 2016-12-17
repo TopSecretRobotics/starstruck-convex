@@ -118,7 +118,7 @@ vexUserSetup()
 		kVexAnalog_2,			// wrist potentiometer
 		TRUE,					// reversed potentiometer (values decrease with positive motor speed)
 		(1.0 / 3.0),			// gear ratio (1:3 or ~2000 ticks per revolution)
-		3170,					// resting potentiometer value
+		2900,					// resting potentiometer value
 		620						// resting potentiometer value (inverted)
 	);
 	// Claw Gearing: https://goo.gl/g99rX1
@@ -127,7 +127,7 @@ vexUserSetup()
 		kVexAnalog_3,			// claw potentiometer
 		TRUE,					// reversed potentiometer (values decrease with positive motor speed)
 		(1.0 / 7.0),			// gear ratio (1:7 or ~857 ticks per rotation)
-		3420,					// grab potentiometer value
+		3510,					// grab potentiometer value
 		2290					// open potentiometer value
 	);
 }

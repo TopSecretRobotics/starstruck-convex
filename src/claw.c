@@ -141,7 +141,7 @@ clawThread(void *arg)
 		}
 		if (clawCmd == 0) {
 			// claw open and close
-			if (vexControllerGet( Btn5DXmtr2 )) {
+			if (vexControllerGet( Btn6UXmtr2 )) {
 				claw.lock->enabled = 1;
 				claw.lock->target_value = claw.grabValue;
 			} else if (vexControllerGet( Btn6DXmtr2 ) || vexControllerGet( Btn6D )) {
