@@ -54,6 +54,7 @@
 
 #include "claw.h"
 #include "wrist.h"
+#include "arm.h"
 
 /*-----------------------------------------------------------------------------*/
 /* Command line related.                                                       */
@@ -140,23 +141,43 @@ cmd_wrist(vexStream *chp, int argc, char *argv[])
 	return;
 }
 
+static void
+cmd_arm(vexStream *chp, int argc, char *argv[])
+{
+	(void)argv;
+	(void)chp;
+	(void)argc;
+
+	arm_t *a = armGetPtr();
+	vex_printf("Arm\r\n");
+	vex_printf("\tReversed:      %d\r\n", a->reversed);
+	vex_printf("\tGear Ratio:    %f\r\n", a->gearRatio);
+	vex_printf("\tRest:          %d\r\n", a->restValue);
+	vex_printf("\tRest Inverted: %d\r\n", a->restInvertedValue);
+	vex_printf("Arm Lock PID\r\n");
+	vex_pid_debug(a->lock);
+
+	return;
+}
+
 #define SHELL_WA_SIZE THD_WA_SIZE(512)
 
 // Shell command
 static const ShellCommand commands[] = {
-	{"adc",     vexAdcDebug},
-	{"spi",     vexSpiDebug},
-	{"motor",   vexMotorDebug},
-	{"lcd",     vexLcdDebug},
-	{"enc",     vexEncoderDebug},
-	{"son",     vexSonarDebug},
-	{"ime",     vexIMEDebug},
-	{"test",    vexTestDebug},
-	{"sm",      cmd_sm},
-	{"apollo",  cmd_apollo},
-	{"claw",    cmd_claw},
-	{"wrist",   cmd_wrist},
-	{NULL, NULL}
+	{"adc",		vexAdcDebug},
+	{"spi",		vexSpiDebug},
+	{"motor",	vexMotorDebug},
+	{"lcd",		vexLcdDebug},
+	{"enc",		vexEncoderDebug},
+	{"son",		vexSonarDebug},
+	{"ime",		vexIMEDebug},
+	{"test",	vexTestDebug},
+	{"sm",		cmd_sm},
+	{"apollo",	cmd_apollo},
+	{"claw",	cmd_claw},
+	{"wrist",	cmd_wrist},
+	{"arm",		cmd_arm},
+	{NULL,		NULL}
 };
 
 // configuration for the shell

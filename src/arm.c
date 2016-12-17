@@ -109,10 +109,10 @@ armInit(void)
 	// SmartMotorSetRpmSensor(arm.middleMotorPair, arm.potentiometer, 6000 * arm.gearRatio, arm.reversed);
 	// SmartMotorSetRpmSensor(arm.bottomMotorPair, arm.potentiometer, 6000 * arm.gearRatio, arm.reversed);
 	// TODO: is this the correct way to link the motors?
-	// SmartMotorLinkMotors(arm.bottomMotorPair, arm.topMotorPair);
-	// SmartMotorLinkMotors(arm.bottomMotorPair, arm.middleMotorPair);
-	// arm.lock = PidControllerInit(0.004, 0.0001, 0.01, kVexSensorUndefined, 0);
-	// arm.lock->enabled = 0;
+	SmartMotorLinkMotors(arm.bottomMotorPair, arm.topMotorPair);
+	SmartMotorLinkMotors(arm.bottomMotorPair, arm.middleMotorPair);
+	arm.lock = PidControllerInit(0.004, 0.0001, 0.01, kVexSensorUndefined, 0);
+	arm.lock->enabled = 0;
 	return;
 }
 
@@ -145,19 +145,20 @@ armThread(void *arg)
 	while (!chThdShouldTerminate()) {
 		armCmd = armSpeed( vexControllerGet( Ch1 ) );
 
-		// if (armCmd == 0) {
-		// 	if (vexControllerGet( Btn7D )) {
-		// 		arm.lock->enabled = 1;
-		// 		arm.lock->target_value = arm.restValue;
-		// 	}
-		// 	armPIDUpdate(&armCmd);
-		// 	// armCmd = armSpeed( PidControllerUpdate( arm.lock ) );
-		// 	vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "error %f", arm.lock->error);
-		// } else {
-		// 	// disable PID if driving
-		// 	arm.lock->enabled = 0;
-		// 	PidControllerUpdate( arm.lock ); // zero out PID
-		// }
+		// (void) armPIDUpdate;
+
+		if (armCmd == 0) {
+			if (vexControllerGet( Btn7D )) {
+				arm.lock->enabled = 1;
+				arm.lock->target_value = arm.restValue;
+			}
+			armPIDUpdate(&armCmd);
+			// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "error %f", arm.lock->error);
+		} else {
+			// disable PID if driving
+			arm.lock->enabled = 0;
+			PidControllerUpdate( arm.lock ); // zero out PID
+		}
 
 		SetMotor( arm.topMotorPair, armCmd );
 		SetMotor( arm.middleMotorPair, armCmd );
@@ -179,17 +180,21 @@ armPIDUpdate(int16_t *cmd)
 		arm.lock->target_value = vexAdcGet( arm.potentiometer );
 	}
 	// prevent PID from trying to lock outside bounds
-	if (arm.reversed) {
-		if (arm.lock->target_value > arm.restValue)
-			arm.lock->target_value = arm.restValue;
-		else if (arm.lock->target_value < arm.restInvertedValue)
-			arm.lock->target_value = arm.restInvertedValue;
-	} else {
-		if (arm.lock->target_value < arm.restValue)
-			arm.lock->target_value = arm.restValue;
-		else if (arm.lock->target_value > arm.restInvertedValue)
-			arm.lock->target_value = arm.restInvertedValue;
-	}
+	// if (arm.reversed) {
+	// 	if (arm.lock->target_value > arm.restValue)
+	// 		arm.lock->target_value = arm.restValue;
+	// 	else if (arm.lock->target_value < arm.restInvertedValue)
+	// 		arm.lock->target_value = arm.restInvertedValue;
+	// } else {
+	// 	if (arm.lock->target_value < arm.restValue)
+	// 		arm.lock->target_value = arm.restValue;
+	// 	else if (arm.lock->target_value > arm.restInvertedValue)
+	// 		arm.lock->target_value = arm.restInvertedValue;
+	// }
+	if (arm.lock->target_value > arm.restValue)
+		arm.lock->target_value = arm.restValue;
+	else if (arm.lock->target_value < arm.restInvertedValue)
+		arm.lock->target_value = arm.restInvertedValue;
 	arm.lock->sensor_value = vexAdcGet( arm.potentiometer );
 	arm.lock->error =
 		(arm.reversed)
@@ -197,11 +202,12 @@ armPIDUpdate(int16_t *cmd)
 		: (arm.lock->target_value - arm.lock->sensor_value);
 	*cmd = PidControllerUpdate( arm.lock );
 	// limit output if error is small
-	if (fabs(arm.lock->error) < 100) {
-		*cmd = *cmd / 10;
-	} else if (fabs(arm.lock->error) < 300) {
-		*cmd = *cmd / 5;
-	} else if (fabs(arm.lock->error) < 700) {
+	// if (fabs(arm.lock->error) < 100) {
+	// 	*cmd = *cmd / 10;
+	// } else if (fabs(arm.lock->error) < 300) {
+	// 	*cmd = *cmd / 5;
+	// } else
+	if (fabs(arm.lock->error) < 700) {
 		*cmd = *cmd / 2;
 	}
 	*cmd = armSpeed( *cmd );
