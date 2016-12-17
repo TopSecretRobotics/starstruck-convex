@@ -143,12 +143,12 @@ armThread(void *arg)
 	vexTaskRegister("arm");
 
 	while (!chThdShouldTerminate()) {
-		armCmd = armSpeed( vexControllerGet( Ch1 ) );
+		armCmd = armSpeed( vexControllerGet( Ch3Xmtr2 ) );
 
 		// (void) armPIDUpdate;
 
 		if (armCmd == 0) {
-			if (vexControllerGet( Btn7D )) {
+			if (vexControllerGet( Btn6D )) {
 				arm.lock->enabled = 1;
 				arm.lock->target_value = arm.restValue;
 			}
@@ -180,21 +180,11 @@ armPIDUpdate(int16_t *cmd)
 		arm.lock->target_value = vexAdcGet( arm.potentiometer );
 	}
 	// prevent PID from trying to lock outside bounds
-	// if (arm.reversed) {
-	// 	if (arm.lock->target_value > arm.restValue)
-	// 		arm.lock->target_value = arm.restValue;
-	// 	else if (arm.lock->target_value < arm.restInvertedValue)
-	// 		arm.lock->target_value = arm.restInvertedValue;
-	// } else {
-	// 	if (arm.lock->target_value < arm.restValue)
-	// 		arm.lock->target_value = arm.restValue;
-	// 	else if (arm.lock->target_value > arm.restInvertedValue)
-	// 		arm.lock->target_value = arm.restInvertedValue;
-	// }
 	if (arm.lock->target_value > arm.restValue)
 		arm.lock->target_value = arm.restValue;
 	else if (arm.lock->target_value < arm.restInvertedValue)
 		arm.lock->target_value = arm.restInvertedValue;
+	// update PID
 	arm.lock->sensor_value = vexAdcGet( arm.potentiometer );
 	arm.lock->error =
 		(arm.reversed)

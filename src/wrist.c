@@ -137,10 +137,13 @@ wristThread(void *arg)
 	// wristAutotune();
 
 	while (!chThdShouldTerminate()) {
-		wristCmd = wristSpeed( vexControllerGet( Ch3 ) );
-
+		if (!vexControllerGet( Btn5UXmtr2 )) {
+			wristCmd = wristSpeed( vexControllerGet( Ch2Xmtr2 ) );
+		} else {
+			wristCmd = 0;
+		}
 		if (wristCmd == 0) {
-			if (vexControllerGet( Btn7D )) {
+			if (vexControllerGet( Btn6D )) {
 				wrist.lock->enabled = 1;
 				wrist.lock->target_value = wrist.restValue;
 			}
@@ -171,17 +174,11 @@ wristPIDUpdate(int16_t *cmd)
 		wrist.lock->target_value = vexAdcGet( wrist.potentiometer );
 	}
 	// prevent PID from trying to lock outside bounds
-	if (wrist.reversed) {
-		if (wrist.lock->target_value > wrist.restValue)
-			wrist.lock->target_value = wrist.restValue;
-		else if (wrist.lock->target_value < wrist.restInvertedValue)
-			wrist.lock->target_value = wrist.restInvertedValue;
-	} else {
-		if (wrist.lock->target_value < wrist.restValue)
-			wrist.lock->target_value = wrist.restValue;
-		else if (wrist.lock->target_value > wrist.restInvertedValue)
-			wrist.lock->target_value = wrist.restInvertedValue;
-	}
+	if (wrist.lock->target_value > wrist.restValue)
+		wrist.lock->target_value = wrist.restValue;
+	else if (wrist.lock->target_value < wrist.restInvertedValue)
+		wrist.lock->target_value = wrist.restInvertedValue;
+	// update PID
 	wrist.lock->sensor_value = vexAdcGet( wrist.potentiometer );
 	wrist.lock->error =
 		(wrist.reversed)
@@ -189,11 +186,12 @@ wristPIDUpdate(int16_t *cmd)
 		: (wrist.lock->target_value - wrist.lock->sensor_value);
 	*cmd = PidControllerUpdate( wrist.lock );
 	// limit output if error is small
-	if (fabs(wrist.lock->error) < 100) {
-		*cmd = *cmd / 10;
-	} else if (fabs(wrist.lock->error) < 300) {
-		*cmd = *cmd / 5;
-	} else if (fabs(wrist.lock->error) < 700) {
+	// if (fabs(wrist.lock->error) < 100) {
+	// 	*cmd = *cmd / 10;
+	// } else if (fabs(wrist.lock->error) < 300) {
+	// 	*cmd = *cmd / 5;
+	// } else
+	if (fabs(wrist.lock->error) < 700) {
 		*cmd = *cmd / 2;
 	}
 	*cmd = wristSpeed( *cmd );

@@ -127,8 +127,8 @@ vexUserSetup()
 		kVexAnalog_3,			// claw potentiometer
 		TRUE,					// reversed potentiometer (values decrease with positive motor speed)
 		(1.0 / 7.0),			// gear ratio (1:7 or ~857 ticks per rotation)
-		2540,					// grab potentiometer value
-		1800					// open potentiometer value
+		3420,					// grab potentiometer value
+		2290					// open potentiometer value
 	);
 }
 
@@ -219,10 +219,10 @@ vexOperator( void *arg )
 	// Must call this
 	vexTaskRegister("operator");
 
-	// driveStart();
+	driveStart();
 	armStart();
 	wristStart();
-	// clawStart();
+	clawStart();
 
 	// char buf[100] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	// size_t buflen = strnlen(buf, 100);
@@ -242,7 +242,7 @@ vexOperator( void *arg )
 
 		// status on LCD of encoder and sonar
 		vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
-		vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "motor speed %3d", vexMotorGet( kVexMotor_3 ) );
+		vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "motor speed %3d", vexMotorGet( kVexMotor_4 ) );
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "claw pot %4d", vexAdcGet( clawGetPtr()->potentiometer ) );
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "wrist pot %4d", vexAdcGet( kVexAnalog_2 ) );
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "%3d %3d %3d", vexMotorGet( kVexMotor_8 ), vexMotorGet( kVexMotor_7 ), vexMotorGet( kVexMotor_3 ));

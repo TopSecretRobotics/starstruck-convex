@@ -134,14 +134,17 @@ clawThread(void *arg)
 	vexTaskRegister("claw");
 
 	while (!chThdShouldTerminate()) {
-		clawCmd = clawSpeed( vexControllerGet( Ch2 ) );
-
+		if (vexControllerGet( Btn5UXmtr2 )) {
+			clawCmd = clawSpeed( vexControllerGet( Ch1Xmtr2 ) );
+		} else {
+			clawCmd = 0;
+		}
 		if (clawCmd == 0) {
 			// claw open and close
-			if (vexControllerGet( Btn6U ) && !vexControllerGet( Btn6D )) {
+			if (vexControllerGet( Btn5DXmtr2 )) {
 				claw.lock->enabled = 1;
 				claw.lock->target_value = claw.grabValue;
-			} else if (!vexControllerGet( Btn6U ) && vexControllerGet( Btn6D )) {
+			} else if (vexControllerGet( Btn6DXmtr2 ) || vexControllerGet( Btn6D )) {
 				claw.lock->enabled = 1;
 				claw.lock->target_value = claw.openValue;
 			}
@@ -170,17 +173,11 @@ clawPIDUpdate(int16_t *cmd)
 		claw.lock->target_value = vexAdcGet( claw.potentiometer );
 	}
 	// prevent PID from trying to lock outside bounds
-	if (claw.reversed) {
-		if (claw.lock->target_value > claw.grabValue)
-			claw.lock->target_value = claw.grabValue;
-		else if (claw.lock->target_value < claw.openValue)
-			claw.lock->target_value = claw.openValue;
-	} else {
-		if (claw.lock->target_value < claw.grabValue)
-			claw.lock->target_value = claw.grabValue;
-		else if (claw.lock->target_value > claw.openValue)
-			claw.lock->target_value = claw.openValue;
-	}
+	if (claw.lock->target_value > claw.grabValue)
+		claw.lock->target_value = claw.grabValue;
+	else if (claw.lock->target_value < claw.openValue)
+		claw.lock->target_value = claw.openValue;
+	// update PID
 	claw.lock->sensor_value = vexAdcGet( claw.potentiometer );
 	claw.lock->error =
 		(claw.reversed)
