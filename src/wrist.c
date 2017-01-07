@@ -143,7 +143,7 @@ wristThread(void *arg)
 			wristCmd = 0;
 		}
 		if (wristCmd == 0) {
-			if (vexControllerGet( Btn6D )) {
+			if (vexControllerGet( Btn7DXmtr2 )) {
 				wrist.lock->enabled = 1;
 				wrist.lock->target_value = wrist.restValue;
 			}

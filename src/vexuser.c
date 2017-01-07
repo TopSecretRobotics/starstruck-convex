@@ -118,8 +118,8 @@ vexUserSetup()
 		kVexAnalog_2,			// wrist potentiometer
 		TRUE,					// reversed potentiometer (values decrease with positive motor speed)
 		(1.0 / 3.0),			// gear ratio (1:3 or ~2000 ticks per revolution)
-		2900,					// resting potentiometer value
-		620						// resting potentiometer value (inverted)
+		3050,					    // resting potentiometer value
+		920						// resting potentiometer value (inverted)
 	);
 	// Claw Gearing: https://goo.gl/g99rX1
 	clawSetup(
@@ -242,7 +242,7 @@ vexOperator( void *arg )
 
 		// status on LCD of encoder and sonar
 		vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
-		vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "motor speed %3d", vexMotorGet( kVexMotor_4 ) );
+		vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "motor speed %3d", vexMotorGet( kVexMotor_6 ) );
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "claw pot %4d", vexAdcGet( clawGetPtr()->potentiometer ) );
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "wrist pot %4d", vexAdcGet( kVexAnalog_2 ) );
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "%3d %3d %3d", vexMotorGet( kVexMotor_8 ), vexMotorGet( kVexMotor_7 ), vexMotorGet( kVexMotor_3 ));

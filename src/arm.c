@@ -150,7 +150,7 @@ armThread(void *arg)
 
 		if (armCmd == 0) {
 			immediate = FALSE;
-			if (vexControllerGet( Btn6D )) {
+			if (vexControllerGet( Btn7DXmtr2 )) {
 				arm.lock->enabled = 1;
 				arm.lock->target_value = arm.restValue;
 			}
