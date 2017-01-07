@@ -54,7 +54,15 @@ deps::
 app::
 	$(MAKE) -C src
 
+ifeq ($(PLATFORM),windows)
+
+VEX_DEVICE ?= $(word 1, $(shell (pros lsusb | grep -i com | head -n 1)))
+
+else
+
 VEX_DEVICE ?= $(word 1, $(shell (pros lsusb | grep -i vex | head -n 1)))
+
+endif
 
 ifeq ($(VEX_DEVICE),)
 
@@ -72,7 +80,7 @@ flash::
 ifeq ($(PLATFORM),windows)
 
 shell::
-	$(verbose) putty -serial $(VEX_DEVICE)
+	$(verbose) putty -serial $(VEX_DEVICE) -sercfg 115200
 
 # $(error You will need to use PuTTY to connect to device $(VEX_DEVICE) at speed 115200)
 
