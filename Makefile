@@ -1,4 +1,4 @@
-.PHONY: all app clean deps flash lsusb shell
+.PHONY: all app clean deps flash lsusb shell windocker
 
 # Verbosity.
 
@@ -72,7 +72,9 @@ flash::
 ifeq ($(PLATFORM),windows)
 
 shell::
-	$(error You will need to use PuTTY to connect to device $(VEX_DEVICE) at speed 115200)
+	$(verbose) putty -serial $(VEX_DEVICE)
+
+# $(error You will need to use PuTTY to connect to device $(VEX_DEVICE) at speed 115200)
 
 else
 
@@ -85,3 +87,18 @@ endif
 
 lsusb::
 	$(verbose) pros lsusb
+
+ifeq ($(PLATFORM),windows)
+
+windocker::
+	docker-compose build
+	docker rm -f convex_project_data || true
+	docker create -v /"$(shell pwd)":/build/project --name convex_project_data convex_project
+	winpty docker run -it --rm --volumes-from convex_project_data convex_project
+
+else
+
+windocker::
+	$(error This only works on Windows.)
+
+endif
