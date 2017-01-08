@@ -75,7 +75,7 @@ shell::
 else
 
 flash::
-	-$(verbose) $(CORTEXFLASH) -X -w $(CURDIR)/bin/output.hex -v -g 0x0 $(VEX_DEVICE)
+	-$(verbose) "$(CORTEXFLASH)" -X -w "$(CURDIR)/bin/output.hex" -v -g 0x0 $(VEX_DEVICE)
 
 ifeq ($(PLATFORM),windows)
 
