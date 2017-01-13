@@ -117,9 +117,9 @@ driveThread(void *arg)
 	vexTaskRegister("drive");
 
 	while (!chThdShouldTerminate()) {
-		driveX = vexControllerGet( Ch4 );
-		driveY = vexControllerGet( Ch3 );
-		driveR = vexControllerGet( Ch1 );
+		driveX = vexControllerGet( Ch4 ) + vexControllerGet( Ch4Xmtr2 );
+		driveY = vexControllerGet( Ch3 ) + vexControllerGet( Ch3xmtr2 );
+		driveR = vexControllerGet( Ch1 ) + vexControllerGet( Ch1xmtr2 );
 
 		SetMotor( drive.northeast, driveSpeed( driveY - driveX - driveR ) );
 		SetMotor( drive.northwest, driveSpeed( driveY + driveX + driveR ) );

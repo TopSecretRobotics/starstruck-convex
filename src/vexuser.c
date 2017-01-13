@@ -127,22 +127,22 @@ vexUserSetup()
 	// 	3050,					    // resting potentiometer value
 	// 	920						// resting potentiometer value (inverted)
 	// );
-	// Claw Gearing: https://goo.gl/g99rX1
-	clawSetup(
-		kVexMotor_7,			// left claw motor
-		kVexAnalog_6,			// left claw potentiometer
-		FALSE,					// normal left potentiometer (values increase with positive motor speed)
-		kVexMotor_5,			// right claw motor
-		kVexAnalog_3,			// right claw potentiometer
-		TRUE,					// reversed right potentiometer (values decrease with positive motor speed)
-		(1.0 / 1.0),			// gear ratio (1:1 or ~6000 ticks per rotation)
-		3125,					// left back potentiometer value
-		7,						// left grab potentiometer value
-		1570,					// left open potentiometer value
-		720,					// right back potentiometer value
-		4007,					// right grab potentiometer value
-		2016					// right open potentiometer value
-	);
+	// // Claw Gearing: https://goo.gl/g99rX1
+	// clawSetup(
+	// 	kVexMotor_7,			// left claw motor
+	// 	kVexAnalog_6,			// left claw potentiometer
+	// 	FALSE,					// normal left potentiometer (values increase with positive motor speed)
+	// 	kVexMotor_5,			// right claw motor
+	// 	kVexAnalog_3,			// right claw potentiometer
+	// 	TRUE,					// reversed right potentiometer (values decrease with positive motor speed)
+	// 	(1.0 / 1.0),			// gear ratio (1:1 or ~6000 ticks per rotation)
+	// 	3125,					// left back potentiometer value
+	// 	7,						// left grab potentiometer value
+	// 	1570,					// left open potentiometer value
+	// 	720,					// right back potentiometer value
+	// 	4007,					// right grab potentiometer value
+	// 	2016					// right open potentiometer value
+	// );
 }
 
 /*-----------------------------------------------------------------------------*/
@@ -232,10 +232,10 @@ vexOperator( void *arg )
 	// Must call this
 	vexTaskRegister("operator");
 
-	//driveStart();
+	driveStart();
 	// armStart();
 	// wristStart();
-	clawStart();
+	// clawStart();
 
 	// char buf[100] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	// size_t buflen = strnlen(buf, 100);
