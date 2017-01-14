@@ -4,12 +4,12 @@
 	Set Up
 
 	You don't need to follow in exact order, but it is there for convenience in time
-	Step 1: Open up Sublime Text  (it should already be open)
-	Step 2: Open up GitBash
-	Step 3: Open up Docker
-	Step 4: Open up GitHub
-	Step 5: In Docker and GitBash: Run cd Documents/Git-Hub/starstruck-convex (when typing click tab to have it finish for you)
-	Step 6: In Docker: Run make windocker (once Docker is ready)
+	1- Open up Sublime Text  (it should already be open)
+	2- Open up GitBash
+	3- Open up Docker
+	4- Open up GitHub
+	5- In Docker and GitBash: Run cd Documents/Git-Hub/starstruck-convex (when typing click tab to have it finish for you)
+	6- In Docker: Run make windocker (once Docker is ready)
 
 	After you finish Programming
 
@@ -17,4 +17,8 @@
 		1- git add .
 		2- git commit -m "Type what you did today"
 		3- git push origin master
+
+	To see if anything is new before going to GitHub run:
+		git log
+	once you are done looking at it hit the q button
 */
