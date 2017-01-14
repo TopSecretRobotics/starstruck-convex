@@ -33,6 +33,7 @@ typedef struct claw_s {
 	int16_t			rightOpenValue;
 	pidController	*leftLock;
 	pidController	*rightLock;
+	bool_t			isGrabbing;
 } claw_t;
 
 extern claw_t	*clawGetPtr(void);

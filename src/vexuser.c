@@ -76,10 +76,10 @@ static vexMotorCfg mConfig[kVexMotorNum] = {
 	{ kVexMotor_2,		kVexMotor393R,			kVexMotorNormal,		kVexSensorNone,			0 },
 	{ kVexMotor_3,		kVexMotorUndefined,		kVexMotorNormal,		kVexSensorNone,			0 },
 	{ kVexMotor_4,		kVexMotorUndefined,		kVexMotorNormal,		kVexSensorNone,			0 },
-	{ kVexMotor_5,		kVexMotor393T,			kVexMotorNormal,		kVexSensorNone,			0 },
+	{ kVexMotor_5,		kVexMotor393T,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_4 },
 	{ kVexMotor_6,		kVexMotorUndefined,		kVexMotorNormal,		kVexSensorNone,			0 },
-	{ kVexMotor_7,		kVexMotor393T,			kVexMotorReversed,		kVexSensorNone,			0 },
-	{ kVexMotor_8,		kVexMotor393T,			kVexMotorNormal,		kVexSensorNone,			0 },
+	{ kVexMotor_7,		kVexMotor393T,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_3 },
+	{ kVexMotor_8,		kVexMotor393T,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_2 },
 	// { kVexMotor_3,		kVexMotor393T,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_1 },
 	// { kVexMotor_4,		kVexMotor393T,			kVexMotorNormal,		kVexSensorNone,			0 },
 	// { kVexMotor_5,		kVexMotorUndefined,		kVexMotorNormal,		kVexSensorNone,			0 },
@@ -127,22 +127,22 @@ vexUserSetup()
 	// 	3050,					    // resting potentiometer value
 	// 	920						// resting potentiometer value (inverted)
 	// );
-	// // Claw Gearing: https://goo.gl/g99rX1
-	// clawSetup(
-	// 	kVexMotor_7,			// left claw motor
-	// 	kVexAnalog_6,			// left claw potentiometer
-	// 	FALSE,					// normal left potentiometer (values increase with positive motor speed)
-	// 	kVexMotor_5,			// right claw motor
-	// 	kVexAnalog_3,			// right claw potentiometer
-	// 	TRUE,					// reversed right potentiometer (values decrease with positive motor speed)
-	// 	(1.0 / 1.0),			// gear ratio (1:1 or ~6000 ticks per rotation)
-	// 	3125,					// left back potentiometer value
-	// 	7,						// left grab potentiometer value
-	// 	1570,					// left open potentiometer value
-	// 	720,					// right back potentiometer value
-	// 	4007,					// right grab potentiometer value
-	// 	2016					// right open potentiometer value
-	// );
+	// Claw Gearing: https://goo.gl/g99rX1
+	clawSetup(
+		kVexMotor_7,			// left claw motor
+		kVexAnalog_6,			// left claw potentiometer
+		FALSE,					// normal left potentiometer (values increase with positive motor speed)
+		kVexMotor_5,			// right claw motor
+		kVexAnalog_3,			// right claw potentiometer
+		TRUE,					// reversed right potentiometer (values decrease with positive motor speed)
+		(1.0 / 2.0),			// gear ratio (1:1 or ~6000 ticks per rotation)
+		740,					// left back potentiometer value
+		4060,					// left grab potentiometer value
+		2300,					// left open potentiometer value
+		3160,					// right back potentiometer value
+		5,						// right grab potentiometer value
+		1645					// right open potentiometer value
+	);
 }
 
 /*-----------------------------------------------------------------------------*/
@@ -232,7 +232,7 @@ vexOperator( void *arg )
 	// Must call this
 	vexTaskRegister("operator");
 
-	driveStart();
+	// driveStart();
 	// armStart();
 	// wristStart();
 	// clawStart();
@@ -255,7 +255,7 @@ vexOperator( void *arg )
 
 		// status on LCD of encoder and sonar
 		vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
-		vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "motor speed %3d", vexMotorGet( kVexMotor_6 ) );
+		vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "m4 %3d m6 %3d", vexMotorGet( kVexMotor_4 ), vexMotorGet( kVexMotor_6 ) );
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "claw pot %4d", vexAdcGet( clawGetPtr()->potentiometer ) );
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "wrist pot %4d", vexAdcGet( kVexAnalog_2 ) );
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "%3d %3d %3d", vexMotorGet( kVexMotor_8 ), vexMotorGet( kVexMotor_7 ), vexMotorGet( kVexMotor_3 ));
@@ -297,7 +297,9 @@ vexOperator( void *arg )
 		// vexMotorSet( MotorWheel, 127 );
 
 		//claw left
-		// vexMotorSet( kVexMotor_7, vexControllerGet( Ch2 ) );
+		SetMotor( kVexMotor_4, vexControllerGet( Ch4 ) );
+		SetMotor( kVexMotor_6, vexControllerGet( Ch2 ) );
+		// vexMotorSet( kVexMotor_8, vexControllerGet( Ch2 ) );
 
 		// Don't hog cpu
 		vexSleep( 25 );

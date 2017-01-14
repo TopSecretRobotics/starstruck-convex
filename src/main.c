@@ -116,8 +116,10 @@ cmd_claw(vexStream *chp, int argc, char *argv[])
 	(void)chp;
 	(void)argc;
 
-	vex_printf("Claw Lock PID\r\n");
-	// vex_pid_debug(clawGetPtr()->lock);
+	vex_printf("Claw Left Lock PID\r\n");
+	vex_pid_debug(clawGetPtr()->leftLock);
+	vex_printf("Claw Right Lock PID\r\n");
+	vex_pid_debug(clawGetPtr()->rightLock);
 
 	return;
 }
