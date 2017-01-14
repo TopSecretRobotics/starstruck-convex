@@ -72,16 +72,16 @@ static vexDigiCfg dConfig[kVexDigital_Num] = {
 
 // Motor configuration
 static vexMotorCfg mConfig[kVexMotorNum] = {
-	{ kVexMotor_1,		kVexMotor393R,			kVexMotorNormal,		kVexSensorNone,			0 },
-	{ kVexMotor_2,		kVexMotor393R,			kVexMotorNormal,		kVexSensorNone,			0 },
+	{ kVexMotor_1,		kVexMotor393S,			kVexMotorNormal,		kVexSensorNone,			0 },
+	{ kVexMotor_2,		kVexMotor393S,			kVexMotorNormal,		kVexSensorNone,			0 },
 	{ kVexMotor_3,		kVexMotor393T,			kVexMotorNormal,		kVexSensorNone,			0 },
 	{ kVexMotor_4,		kVexMotor393T,			kVexMotorNormal,		kVexSensorNone,			0 },
 	{ kVexMotor_5,		kVexMotor393T,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_4 },
 	{ kVexMotor_6,		kVexMotor393T,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_1 },
 	{ kVexMotor_7,		kVexMotor393T,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_3 },
 	{ kVexMotor_8,		kVexMotor393T,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_2 },
-	{ kVexMotor_9,		kVexMotor393R,			kVexMotorNormal,		kVexSensorNone,			0 },
-	{ kVexMotor_10,		kVexMotor393R,			kVexMotorNormal,		kVexSensorNone,			0 }
+	{ kVexMotor_9,		kVexMotor393S,			kVexMotorNormal,		kVexSensorNone,			0 },
+	{ kVexMotor_10,		kVexMotor393S,			kVexMotorNormal,		kVexSensorNone,			0 }
 };
 
 /*-----------------------------------------------------------------------------*/
@@ -171,13 +171,125 @@ msg_t
 vexAutonomous( void *arg )
 {
 	(void)arg;
+	 drive_t *d= driveGetPtr();
+	 claw_t  *c= clawGetPtr();
+	 arm_t   *a= armGetPtr(void);
+	 // Must call this
+	 vexTaskRegister("auton");
 
-	// Must call this
-	vexTaskRegister("auton");
+	 while (1) {
 
-	while (1) {
-		// Don't hog cpu
-		vexSleep( 25 );
+	 	// Drive in NW direction for 2 sec.
+	 	SetMotor(d-> southwest, 127);
+	 	SetMotor(d-> northeast, 127);
+
+	 	vexSleep(2000);
+
+	 	// Stop drive
+	 	SetMotor(d-> southwest, 0);
+	 	SetMotor(d-> northeast, 0);
+
+	 	// Open claw for .5 sec
+	 	SetMotor(c-> leftMotor, 127);
+	 	SetMotor(c-> rightMotor, 127);
+
+	 	vexSleep( 500 );
+
+	 	SetMotor(d-> northeast, 127);
+		SetMotor(d-> northwest, 127);
+		SetMotor(d-> southwest, 127);
+		SetMotor(d-> southeast, 127);
+
+	 	vexSleep( 500 );
+
+	 	// Stop claw
+	 	SetMotor(c-> leftMotor, 0);
+	 	SetMotor(c-> rightMotor, 0);
+
+	 	//vexSleep( 500 );
+
+	 	// Don't hog cpu
+	 	vexSleep( 12000 );
+	 }
+
+	while (2) {
+
+		SetMotor(d-> northeast, -127);
+		SetMotor(d-> northwest,  127);
+		SetMotor(d-> southwest, -127);
+		SetMotor(d-> southeast,  127);
+
+		vexSleep( 1000 );
+
+		SetMotor(d-> northeast,  0);
+		SetMotor(d-> northwest,  0);
+		SetMotor(d-> southwest,  0);
+		SetMotor(d-> southeast,  0);
+
+		SetMotor(c-> leftMotor,  50);
+		SetMotor(c-> rightMotor, 50);
+
+		vexSleep( 500 );
+
+		SetMotor(c-> leftMotor,  0);
+		SetMotor(c-> rightMotor, 0);
+
+		SetMotor(d-> northeast, 127);
+		SetMotor(d-> northwest, 127);
+		SetMotor(d-> southwest, 127);
+		SetMotor(d-> southeast, 127);
+
+		vexSleep( 2000 );
+
+		SetMotor(d-> northeast, 0);
+		SetMotor(d-> northwest, 0);
+		SetMotor(d-> southwest, 0);
+		SetMotor(d-> southeast, 0);
+
+		SetMotor(c-> leftMotor,  -100);
+		SetMotor(c-> rightMotor, -100);
+
+		vexSleep( 500 );
+
+		SetMotor(d-> northeast,  127);
+		SetMotor(d-> northwest, -127);
+		SetMotor(d-> southwest,  127);
+		SetMotor(d-> southeast, -127);
+
+		vexSleep( 1000 );
+
+		SetMotor(d-> northeast, 0);
+		SetMotor(d-> northwest, 0);
+		SetMotor(d-> southwest, 0);
+		SetMotor(d-> southeast, 0);
+
+		SetMotor(d-> northeast, 127);
+		SetMotor(d-> northwest, 127);
+		SetMotor(d-> southwest, 127);
+		SetMotor(d-> southeast, 127);
+
+		vexSleep( 1000 );
+
+		SetMotor(d-> northeast, 0);
+		SetMotor(d-> northwest, 0);
+		SetMotor(d-> southwest, 0);
+		SetMotor(d-> southeast, 0);
+
+		SetMotor(d-> northeast, -127);
+		SetMotor(d-> northwest,  127);
+		SetMotor(d-> southwest, -127);
+		SetMotor(d-> southeast,  127);
+
+		vexSleep( 1000 );
+
+		SetMotor(d-> northeast, -127);
+		SetMotor(d-> northwest, -127);
+		SetMotor(d-> southwest, -127);
+		SetMotor(d-> southeast, -127);
+
+		vexSleep( 500 );
+
+
 	}
 
 	return (msg_t)0;
