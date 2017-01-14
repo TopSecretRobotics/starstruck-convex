@@ -169,13 +169,13 @@ clawThread(void *arg)
 				claw.leftLock->target_value = claw.leftBackValue;
 				claw.rightLock->enabled = 1;
 				claw.rightLock->target_value = claw.rightBackValue;
-			} else if (vexControllerGet( Btn6U )) {
+			} else if (vexControllerGet( Btn6U ) || vexControllerGet( Btn6UXmtr2 )) {
 				claw.isGrabbing = TRUE;
 				claw.leftLock->enabled = 1;
 				claw.leftLock->target_value = claw.leftGrabValue;
 				claw.rightLock->enabled = 1;
 				claw.rightLock->target_value = claw.rightGrabValue;
-			} else if (vexControllerGet( Btn6D )) {
+			} else if (vexControllerGet( Btn6D ) || vexControllerGet( Btn6DXmtr2 )) {
 				claw.isGrabbing = FALSE;
 				claw.leftLock->enabled = 1;
 				claw.leftLock->target_value = claw.leftOpenValue;

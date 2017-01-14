@@ -80,19 +80,23 @@ wristGetPtr(void)
 /** @param[in]  potentiometer The wrist potentiometer                          */
 /** @param[in]  reversed Is the wrist potentiometer reversed?                  */
 /** @param[in]  gearRatio Gear ratio between motor and potentiometer           */
-/** @param[in]  restValue The wrist potentiometer rest value                   */
-/** @param[in]  restInvertedValue The wrist potentiometer rest value (inverted)*/
+/** @param[in]  downFront The wrist potentiometer down-front value             */
+/** @param[in]  upBack The wrist potentiometer up-back value                   */
+/** @param[in]  upFront The wrist potentiometer up-front value                 */
 /*-----------------------------------------------------------------------------*/
 void
-wristSetup(tVexMotor motor, tVexAnalogPin potentiometer, bool_t reversed, float gearRatio, int16_t restValue, int16_t restInvertedValue)
+wristSetup(tVexMotor motor, tVexAnalogPin potentiometer, bool_t reversed,
+		   float gearRatio, int16_t downFront, int16_t upBack, int16_t upFront)
 {
 	wrist.motor = motor;
 	wrist.potentiometer = potentiometer;
 	wrist.reversed = reversed;
 	wrist.gearRatio = gearRatio;
-	wrist.restValue = restValue;
-	wrist.restInvertedValue = restInvertedValue;
+	wrist.downFront = downFront;
+	wrist.upBack = upBack;
+	wrist.upFront = upFront;
 	wrist.lock = NULL;
+	wrist.isDown = FALSE;
 	return;
 }
 
@@ -137,15 +141,24 @@ wristThread(void *arg)
 	// wristAutotune();
 
 	while (!chThdShouldTerminate()) {
-		if (!vexControllerGet( Btn5UXmtr2 )) {
-			wristCmd = wristSpeed( vexControllerGet( Ch2Xmtr2 ) );
-		} else {
-			wristCmd = 0;
-		}
+		// if (!vexControllerGet( Btn5UXmtr2 )) {
+		// 	wristCmd = wristSpeed( vexControllerGet( Ch2Xmtr2 ) );
+		// } else {
+		// 	wristCmd = 0;
+		// }
+		wristCmd = wristSpeed( vexControllerGet( Ch3Xmtr2 ) );
 		if (wristCmd == 0) {
-			if (vexControllerGet( Btn7DXmtr2 )) {
+			if (vexControllerGet( Btn7D ) || vexControllerGet( Btn7DXmtr2 )) {
+				wrist.isDown = TRUE;
 				wrist.lock->enabled = 1;
-				wrist.lock->target_value = wrist.restValue;
+				wrist.lock->target_value = wrist.downFront;
+			} else if (vexControllerGet( Btn7U ) || vexControllerGet( Btn7UXmtr2 )) {
+				wrist.isDown = FALSE;
+				wrist.lock->enabled = 1;
+				wrist.lock->target_value = wrist.upBack;
+			// } else if (vexControllerGet( Btn7R )) {
+			// 	wrist.lock->enabled = 1;
+			// 	wrist.lock->target_value = wrist.upFront;
 			}
 			wristPIDUpdate(&wristCmd);
 			// wristCmd = wristSpeed( PidControllerUpdate( wrist.lock ) );
@@ -174,10 +187,10 @@ wristPIDUpdate(int16_t *cmd)
 		wrist.lock->target_value = vexAdcGet( wrist.potentiometer );
 	}
 	// prevent PID from trying to lock outside bounds
-	if (wrist.lock->target_value > wrist.restValue)
-		wrist.lock->target_value = wrist.restValue;
-	else if (wrist.lock->target_value < wrist.restInvertedValue)
-		wrist.lock->target_value = wrist.restInvertedValue;
+	if (wrist.lock->target_value > wrist.downFront)
+		wrist.lock->target_value = wrist.downFront;
+	else if (wrist.lock->target_value < wrist.upFront)
+		wrist.lock->target_value = wrist.upFront;
 	// update PID
 	wrist.lock->sensor_value = vexAdcGet( wrist.potentiometer );
 	wrist.lock->error =
@@ -186,12 +199,14 @@ wristPIDUpdate(int16_t *cmd)
 		: (wrist.lock->target_value - wrist.lock->sensor_value);
 	*cmd = PidControllerUpdate( wrist.lock );
 	// limit output if error is small
-	if (fabs(wrist.lock->error) < 100) {
-		*cmd = *cmd / 10;
-	} else if (fabs(wrist.lock->error) < 300) {
-		*cmd = *cmd / 5;
-	} else if (fabs(wrist.lock->error) < 700) {
-		*cmd = *cmd / 2;
+	if (wrist.isDown) {
+		*cmd = *cmd / 1;
+	// } else if (fabs(wrist.lock->error) < 100) {
+	// 	*cmd = *cmd / 10;
+	// } else if (fabs(wrist.lock->error) < 300) {
+	// 	*cmd = *cmd / 5;
+	// } else if (fabs(wrist.lock->error) < 700) {
+	// 	*cmd = *cmd / 2;
 	}
 	*cmd = wristSpeed( *cmd );
 	return;

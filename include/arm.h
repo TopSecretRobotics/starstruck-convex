@@ -18,19 +18,22 @@ extern "C" {
 #endif
 
 typedef struct arm_s {
-	tVexMotor		topMotorPair;
-	tVexMotor		middleMotorPair;
-	tVexMotor		bottomMotorPair;
+	tVexMotor		motor0;
+	tVexMotor		motor1;
+	tVexMotor		motor2;
 	tVexAnalogPin	potentiometer;
 	bool_t			reversed;
 	float			gearRatio;
-	int16_t			restValue;
-	int16_t			restInvertedValue;
+	int16_t			downValue;
+	int16_t			upValue;
 	pidController	*lock;
+	bool_t			isDown;
 } arm_t;
 
 extern arm_t	*armGetPtr(void);
-extern void		armSetup(tVexMotor topMotorPair, tVexMotor middleMotorPair, tVexMotor bottomMotorPair, tVexAnalogPin potentiometer, bool_t reversed, float gearRatio, int16_t restValue, int16_t restInvertedValue);
+extern void		armSetup(tVexMotor motor0, tVexMotor motor1, tVexMotor motor2,
+						 tVexAnalogPin potentiometer, bool_t reversed, float gearRatio,
+						 int16_t downValue, int16_t upValue);
 extern void		armInit(void);
 extern void		armStart(void);
 

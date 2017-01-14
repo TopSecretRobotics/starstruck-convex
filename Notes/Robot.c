@@ -1,4 +1,18 @@
 /*
+	this is the cortex ports and info.
+	_____________________________________________________________________
+	|1-	 SE, HT															|
+	|2-	 NE, EXPANDER, HT												|
+	|3-  Arm,EXPANDER, Y-cable											|
+	|4-	 Arm															|
+	|5-  Right Claw, EXPANDER											|
+	|6-	 Arm															|
+	|7-  Left Claw														|
+	|8-	 																|
+	|9-	 NW, EXPANDER, HT												|
+	|10- SW, HT															|
+	|___________________________________________________________________|
+
 	On these tables the motor will find what power
 	it is supposed to find and go to that slot on the table
 		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,

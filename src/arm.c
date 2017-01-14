@@ -85,17 +85,20 @@ armGetPtr(void)
 /** @param[in]  restInvertedValue The arm potentiometer rest value (inverted)  */
 /*-----------------------------------------------------------------------------*/
 void
-armSetup(tVexMotor topMotorPair, tVexMotor middleMotorPair, tVexMotor bottomMotorPair, tVexAnalogPin potentiometer, bool_t reversed, float gearRatio, int16_t restValue, int16_t restInvertedValue)
+armSetup(tVexMotor motor0, tVexMotor motor1, tVexMotor motor2,
+		 tVexAnalogPin potentiometer, bool_t reversed, float gearRatio,
+		 int16_t downValue, int16_t upValue)
 {
-	arm.topMotorPair = topMotorPair;
-	arm.middleMotorPair = middleMotorPair;
-	arm.bottomMotorPair = bottomMotorPair;
+	arm.motor0 = motor0;
+	arm.motor1 = motor1;
+	arm.motor2 = motor2;
 	arm.potentiometer = potentiometer;
 	arm.reversed = reversed;
 	arm.gearRatio = gearRatio;
-	arm.restValue = restValue;
-	arm.restInvertedValue = restInvertedValue;
+	arm.downValue = downValue;
+	arm.upValue = upValue;
 	arm.lock = NULL;
+	arm.isDown = FALSE;
 	return;
 }
 
@@ -109,8 +112,9 @@ armInit(void)
 	// SmartMotorSetRpmSensor(arm.middleMotorPair, arm.potentiometer, 6000 * arm.gearRatio, arm.reversed);
 	// SmartMotorSetRpmSensor(arm.bottomMotorPair, arm.potentiometer, 6000 * arm.gearRatio, arm.reversed);
 	// TODO: is this the correct way to link the motors?
-	SmartMotorLinkMotors(arm.bottomMotorPair, arm.topMotorPair);
-	SmartMotorLinkMotors(arm.bottomMotorPair, arm.middleMotorPair);
+
+	SmartMotorLinkMotors(arm.motor2, arm.motor1);
+	SmartMotorLinkMotors(arm.motor2, arm.motor0);
 	arm.lock = PidControllerInit(0.004, 0.0001, 0.01, kVexSensorUndefined, 0);
 	arm.lock->enabled = 0;
 	return;
@@ -145,14 +149,20 @@ armThread(void *arg)
 
 	while (!chThdShouldTerminate()) {
 		armCmd = armSpeed( vexControllerGet( Ch3Xmtr2 ) );
+		// armCmd = armSpeed( vexControllerGet( Ch3Xmtr2 ) );
 
 		// (void) armPIDUpdate;
 
 		if (armCmd == 0) {
 			immediate = FALSE;
-			if (vexControllerGet( Btn7DXmtr2 )) {
+			if (vexControllerGet( Btn7D ) || vexControllerGet( Btn7DXmtr2 )) {
+				arm.isDown = TRUE;
 				arm.lock->enabled = 1;
-				arm.lock->target_value = arm.restValue;
+				arm.lock->target_value = arm.downValue;
+			} else if (vexControllerGet( Btn7U ) || vexControllerGet( Btn7UXmtr2 )) {
+				arm.isDown = FALSE;
+				arm.lock->enabled = 1;
+				arm.lock->target_value = arm.upValue;
 			}
 			armPIDUpdate(&armCmd);
 			// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "error %f", arm.lock->error);
@@ -163,9 +173,9 @@ armThread(void *arg)
 			PidControllerUpdate( arm.lock ); // zero out PID
 		}
 
-		SetMotor( arm.topMotorPair, armCmd, immediate );
-		SetMotor( arm.middleMotorPair, armCmd, immediate );
-		SetMotor( arm.bottomMotorPair, armCmd, immediate );
+		SetMotor( arm.motor0, armCmd, immediate );
+		SetMotor( arm.motor1, armCmd, immediate );
+		SetMotor( arm.motor2, armCmd, immediate );
 
 		// Don't hog cpu
 		vexSleep(25);
@@ -183,10 +193,10 @@ armPIDUpdate(int16_t *cmd)
 		arm.lock->target_value = vexAdcGet( arm.potentiometer );
 	}
 	// prevent PID from trying to lock outside bounds
-	if (arm.lock->target_value > arm.restValue)
-		arm.lock->target_value = arm.restValue;
-	else if (arm.lock->target_value < arm.restInvertedValue)
-		arm.lock->target_value = arm.restInvertedValue;
+	if (arm.lock->target_value > arm.downValue)
+		arm.lock->target_value = arm.downValue;
+	else if (arm.lock->target_value < arm.upValue)
+		arm.lock->target_value = arm.upValue;
 	// update PID
 	arm.lock->sensor_value = vexAdcGet( arm.potentiometer );
 	arm.lock->error =
@@ -200,8 +210,10 @@ armPIDUpdate(int16_t *cmd)
 	// } else if (fabs(arm.lock->error) < 300) {
 	// 	*cmd = *cmd / 5;
 	// } else
-	if (fabs(arm.lock->error) < 700) {
-		*cmd = *cmd / 2;
+	if (arm.isDown) {
+		*cmd = *cmd / 1;
+	// } else if (fabs(arm.lock->error) < 700) {
+	// 	*cmd = *cmd / 2;
 	}
 	*cmd = armSpeed( *cmd );
 	return;

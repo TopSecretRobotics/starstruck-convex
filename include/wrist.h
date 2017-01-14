@@ -23,14 +23,17 @@ typedef struct wrist_s {
 	tVexAnalogPin	potentiometer;
 	bool_t			reversed;
 	float			gearRatio;
-	int16_t			restValue;
-	int16_t			restInvertedValue;
+	int16_t			downFront;
+	int16_t			upBack;
+	int16_t			upFront;
 	pidController	*lock;
+	bool_t			isDown;
 	// autotuner_t		at;
 } wrist_t;
 
 extern wrist_t	*wristGetPtr(void);
-extern void		wristSetup(tVexMotor motor, tVexAnalogPin potentiometer, bool_t reversed, float gearRatio, int16_t restValue, int16_t restInvertedValue);
+extern void		wristSetup(tVexMotor motor, tVexAnalogPin potentiometer, bool_t reversed,
+						   float gearRatio, int16_t downFront, int16_t upBack, int16_t upFront);
 extern void		wristInit(void);
 extern void		wristStart(void);
 

@@ -133,10 +133,11 @@ cmd_wrist(vexStream *chp, int argc, char *argv[])
 
 	wrist_t *w = wristGetPtr();
 	vex_printf("Wrist\r\n");
-	vex_printf("\tReversed:      %d\r\n", w->reversed);
-	vex_printf("\tGear Ratio:    %f\r\n", w->gearRatio);
-	vex_printf("\tRest:          %d\r\n", w->restValue);
-	vex_printf("\tRest Inverted: %d\r\n", w->restInvertedValue);
+	vex_printf("\tReversed:   %d\r\n", w->reversed);
+	vex_printf("\tGear Ratio: %f\r\n", w->gearRatio);
+	vex_printf("\tDown-Front: %d\r\n", w->downFront);
+	vex_printf("\tUp-Back:    %d\r\n", w->upBack);
+	vex_printf("\tUp-Front:   %d\r\n", w->upFront);
 	vex_printf("Wrist Lock PID\r\n");
 	vex_pid_debug(w->lock);
 
@@ -152,10 +153,10 @@ cmd_arm(vexStream *chp, int argc, char *argv[])
 
 	arm_t *a = armGetPtr();
 	vex_printf("Arm\r\n");
-	vex_printf("\tReversed:      %d\r\n", a->reversed);
-	vex_printf("\tGear Ratio:    %f\r\n", a->gearRatio);
-	vex_printf("\tRest:          %d\r\n", a->restValue);
-	vex_printf("\tRest Inverted: %d\r\n", a->restInvertedValue);
+	vex_printf("\tReversed:   %d\r\n", a->reversed);
+	vex_printf("\tGear Ratio: %f\r\n", a->gearRatio);
+	vex_printf("\tDown:       %d\r\n", a->downValue);
+	vex_printf("\tUp:         %d\r\n", a->upValue);
 	vex_printf("Arm Lock PID\r\n");
 	vex_pid_debug(a->lock);
 
