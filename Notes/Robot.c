@@ -1,18 +1,4 @@
 /*
-	this is the cortex ports and info.
-	_____________________________________________________________________
-	|1-	 SE, HT															|
-	|2-	 NE, EXPANDER, HT												|
-	|3-  Arm,EXPANDER, Y-cable											|
-	|4-	 Arm															|
-	|5-  Right Claw, EXPANDER											|
-	|6-	 Arm															|
-	|7-  Left Claw														|
-	|8-	 																|
-	|9-	 NW, EXPANDER, HT												|
-	|10- SW, HT															|
-	|___________________________________________________________________|
-
 	On these tables the motor will find what power
 	it is supposed to find and go to that slot on the table
 		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
@@ -27,4 +13,6 @@
 	 61, 62, 63, 64, 65, 66, 67, 67, 68, 70,
 	 71, 72, 72, 73, 74, 76, 77, 78, 79, 79,
 	 80, 81, 83, 84, 84, 86, 86, 87, 87, 88,
+
+	 In Autonomous While (1) = true
 */
