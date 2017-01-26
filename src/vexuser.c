@@ -80,7 +80,7 @@ static vexMotorCfg mConfig[kVexMotorNum] = {
 	{ kVexMotor_7,		kVexMotor393T,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_4 },
 	{ kVexMotor_8,		kVexMotor393T,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_3 },
 	{ kVexMotor_9,		kVexMotor393S,			kVexMotorReversed,		kVexSensorNone,			0 },
-	{ kVexMotor_10,		kVexMotor393S,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_1
+	{ kVexMotor_10,		kVexMotor393S,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_1 }
 };
 
 /*-----------------------------------------------------------------------------*/
@@ -179,7 +179,7 @@ vexAutonomous( void *arg )
 	(void)arg;
 	drive_t *d= driveGetPtr();
 	claw_t  *c= clawGetPtr();
-	arm_t   *a= armGetPtr();
+	// arm_t   *a= armGetPtr();
 	 // Must call this
 	 vexTaskRegister("auton");
 
