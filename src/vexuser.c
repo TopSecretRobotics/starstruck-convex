@@ -51,7 +51,6 @@
 #include "smartmotor.h"
 #include "drive.h"
 #include "arm.h"
-#include "wrist.h"
 #include "claw.h"
 
 // Digital I/O configuration
@@ -101,43 +100,31 @@ vexUserSetup()
 		kVexMotor_1,			// drive southeast or back-right motor
 		kVexMotor_10			// drive southwest or back-left motor
 	);
-	// // Arm Gearing: https://goo.gl/1UD1ne
-	// armSetup(
-	// 	kVexMotor_3,			// arm top motor pair
-	// 	kVexMotor_4,			// arm middle motor pair
-	// 	kVexMotor_6,			// arm bottom motor pair
-	// 	kVexAnalog_4,			// arm potentiometer
-	// 	FALSE,					// normal potentiometer (values increase with positive motor speed)
-	// 	(1.0 / 2.3),			// gear ratio (1:2.3 or ~2600 ticks per rotation)
-	// 	2315,					// down potentiometer value
-	// 	335						// up potentiometer value
-	// );
-	// // Wrist Gearing: https://goo.gl/3fK0Mk
-	// wristSetup(
-	// 	kVexMotor_8,			// wrist motor
-	// 	kVexAnalog_5,			// wrist potentiometer
-	// 	FALSE,					// normal potentiometer (values increase with positive motor speed)
-	// 	(1.0 / 3.0),			// gear ratio (1:3 or ~2000 ticks per revolution)
-	// 	2605,					// down-front potentiometer value
-	// 	1365,					// up-back potentiometer value
-	// 	605						// up-front potentiometer value
-	// );
-	// // Claw Gearing: https://goo.gl/g99rX1
-	// clawSetup(
-	// 	kVexMotor_7,			// left claw motor
-	// 	kVexAnalog_6,			// left claw potentiometer
-	// 	FALSE,					// normal left potentiometer (values increase with positive motor speed)
-	// 	kVexMotor_5,			// right claw motor
-	// 	kVexAnalog_3,			// right claw potentiometer
-	// 	TRUE,					// reversed right potentiometer (values decrease with positive motor speed)
-	// 	(1.0 / 2.0),			// gear ratio (1:1 or ~6000 ticks per rotation)
-	// 	740,					// left back potentiometer value
-	// 	4060,					// left grab potentiometer value
-	// 	2300,					// left open potentiometer value
-	// 	3160,					// right back potentiometer value
-	// 	5,						// right grab potentiometer value
-	// 	1645					// right open potentiometer value
-	// );
+	// Arm Gearing: https://goo.gl/1UD1ne
+	armSetup(
+		kVexMotor_4,			// arm top motor pair
+		kVexMotor_6,			// arm middle motor pair
+		kVexMotor_8,			// arm bottom motor pair
+		kVexAnalog_1,			// arm potentiometer
+		FALSE,					// normal potentiometer (values increase with positive motor speed)
+		(3.0 / 7.0),			// gear ratio (3:7 or ~2600 ticks per rotation)
+		600,					// down potentiometer value
+		3300					// up potentiometer value
+	);
+	// Claw Gearing: https://goo.gl/g99rX1
+	clawSetup(
+		kVexMotor_5,			// left claw motor
+		kVexAnalog_2,			// left claw potentiometer
+		FALSE,					// reversed left potentiometer (values decrease with positive motor speed)
+		kVexMotor_7,			// right claw motor
+		kVexAnalog_3,			// right claw potentiometer
+		FALSE,					// reversed right potentiometer (values decrease with positive motor speed)
+		(1.0 / 7.0),			// gear ratio (1:7 or ~857 ticks per rotation)
+		1400,					// left grab potentiometer value
+		2600,					// left open potentiometer value
+		1600,					// right grab potentiometer value
+		3000					// right open potentiometer value
+	);
 }
 
 /*-----------------------------------------------------------------------------*/
@@ -155,10 +142,9 @@ vexUserInit()
 	SmartMotorCurrentMonitorEnable();
 	// SmartMotorPtcMonitorEnable();
 	SmartMotorsAddPowerExtender(kVexMotor_3, kVexMotor_7, kVexMotor_8, kVexMotor_9);
-	// armInit();
+	armInit();
+	clawInit();
 	driveInit();
-	// wristInit();
-	// clawInit();
 	SmartMotorRun();
 }
 
@@ -390,10 +376,9 @@ vexOperator( void *arg )
 	// Must call this
 	vexTaskRegister("operator");
 
-	// driveStart();
-	// armStart();
-	// wristStart();
-	// clawStart();
+	armStart();
+	clawStart();
+	driveStart();
 
 	// char buf[100] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	// size_t buflen = strnlen(buf, 100);
@@ -406,7 +391,7 @@ vexOperator( void *arg )
 	// bool_t rightPressed = FALSE;
 	// menuItem = menuItems[menuIndex];
 
-	int16_t cmd = 0;
+	// int16_t cmd = 0;
 
 	// Run until asked to terminate
 	while (!chThdShouldTerminate()) {
@@ -466,12 +451,12 @@ vexOperator( void *arg )
 		// SetMotor( kVexMotor_6, vexControllerGet( Ch2 ) );
 		// vexMotorSet( kVexMotor_8, vexControllerGet( Ch2 ) );
 
-		cmd = vexControllerGet( Ch4 );
-		if (abs(cmd) < 20) {
-			cmd = 0;
-		}
-		SetMotor( kVexMotor_5, cmd, FALSE );
-		SetMotor( kVexMotor_7, cmd, FALSE );
+		// cmd = vexControllerGet( Ch4 );
+		// if (abs(cmd) < 20) {
+		// 	cmd = 0;
+		// }
+		// SetMotor( kVexMotor_5, cmd, FALSE );
+		// SetMotor( kVexMotor_7, cmd, FALSE );
 		// SetMotor( kVexMotor_4, cmd, TRUE );
 		// SetMotor( kVexMotor_6, cmd, TRUE );
 		// SetMotor( kVexMotor_8, cmd, TRUE );

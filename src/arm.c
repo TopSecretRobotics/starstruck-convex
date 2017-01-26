@@ -111,8 +111,6 @@ armInit(void)
 	// SmartMotorSetRpmSensor(arm.topMotorPair, arm.potentiometer, 6000 * arm.gearRatio, arm.reversed);
 	// SmartMotorSetRpmSensor(arm.middleMotorPair, arm.potentiometer, 6000 * arm.gearRatio, arm.reversed);
 	// SmartMotorSetRpmSensor(arm.bottomMotorPair, arm.potentiometer, 6000 * arm.gearRatio, arm.reversed);
-	// TODO: is this the correct way to link the motors?
-
 	SmartMotorLinkMotors(arm.motor2, arm.motor1);
 	SmartMotorLinkMotors(arm.motor2, arm.motor0);
 	arm.lock = PidControllerInit(0.004, 0.0001, 0.01, kVexSensorUndefined, 0);
@@ -148,7 +146,8 @@ armThread(void *arg)
 	vexTaskRegister("arm");
 
 	while (!chThdShouldTerminate()) {
-		armCmd = armSpeed( vexControllerGet( Ch3Xmtr2 ) );
+		armCmd = armSpeed( vexControllerGet( Ch2 ) );
+		// armCmd = armSpeed( vexControllerGet( Ch3Xmtr2 ) );
 		// armCmd = armSpeed( vexControllerGet( Ch3Xmtr2 ) );
 
 		// (void) armPIDUpdate;
@@ -167,11 +166,16 @@ armThread(void *arg)
 			armPIDUpdate(&armCmd);
 			// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "error %f", arm.lock->error);
 		} else {
+			arm.isDown = FALSE;
 			immediate = TRUE;
 			// disable PID if driving
 			arm.lock->enabled = 0;
 			PidControllerUpdate( arm.lock ); // zero out PID
 		}
+
+		// SetMotor( arm.motor0, armCmd, FALSE );
+		// SetMotor( arm.motor1, armCmd, FALSE );
+		// SetMotor( arm.motor2, armCmd, FALSE );
 
 		SetMotor( arm.motor0, armCmd, immediate );
 		SetMotor( arm.motor1, armCmd, immediate );
@@ -193,9 +197,9 @@ armPIDUpdate(int16_t *cmd)
 		arm.lock->target_value = vexAdcGet( arm.potentiometer );
 	}
 	// prevent PID from trying to lock outside bounds
-	if (arm.lock->target_value > arm.downValue)
+	if (arm.lock->target_value < arm.downValue)
 		arm.lock->target_value = arm.downValue;
-	else if (arm.lock->target_value < arm.upValue)
+	else if (arm.lock->target_value > arm.upValue)
 		arm.lock->target_value = arm.upValue;
 	// update PID
 	arm.lock->sensor_value = vexAdcGet( arm.potentiometer );
@@ -210,11 +214,14 @@ armPIDUpdate(int16_t *cmd)
 	// } else if (fabs(arm.lock->error) < 300) {
 	// 	*cmd = *cmd / 5;
 	// } else
-	if (arm.isDown) {
-		*cmd = *cmd / 1;
-	// } else if (fabs(arm.lock->error) < 700) {
-	// 	*cmd = *cmd / 2;
+	if (arm.isDown && fabs(arm.lock->error) > 50) {
+		*cmd = *cmd * 100;
 	}
+	// if (arm.isDown) {
+	// 	*cmd = *cmd / 1;
+	// // } else if (fabs(arm.lock->error) < 700) {
+	// // 	*cmd = *cmd / 2;
+	// }
 	*cmd = armSpeed( *cmd );
 	return;
 }

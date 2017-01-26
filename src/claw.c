@@ -82,18 +82,16 @@ clawGetPtr(void)
 /** @param[in]  rightPotentiometer The right claw potentiometer                */
 /** @param[in]  rightSensorReversed Is the right claw potentiometer reversed?  */
 /** @param[in]  gearRatio Gear ratio between motor and potentiometer           */
-/** @param[in]  leftBackValue The left claw potentiometer back value           */
 /** @param[in]  leftGrabValue The left claw potentiometer grab value           */
 /** @param[in]  leftOpenValue The left claw potentiometer open value           */
-/** @param[in]  rightBackValue The right claw potentiometer back value         */
 /** @param[in]  rightGrabValue The right claw potentiometer grab value         */
 /** @param[in]  rightOpenValue The right claw potentiometer open value         */
 /*-----------------------------------------------------------------------------*/
 void
 clawSetup(tVexMotor leftMotor, tVexAnalogPin leftPotentiometer, bool_t leftSensorReversed,
 		  tVexMotor rightMotor, tVexAnalogPin rightPotentiometer, bool_t rightSensorReversed,
-		  float gearRatio, int16_t leftBackValue, int16_t leftGrabValue, int16_t leftOpenValue,
-		  int16_t rightBackValue, int16_t rightGrabValue, int16_t rightOpenValue)
+		  float gearRatio, int16_t leftGrabValue, int16_t leftOpenValue,
+		  int16_t rightGrabValue, int16_t rightOpenValue)
 {
 	claw.leftMotor = leftMotor;
 	claw.leftPotentiometer = leftPotentiometer;
@@ -102,10 +100,8 @@ clawSetup(tVexMotor leftMotor, tVexAnalogPin leftPotentiometer, bool_t leftSenso
 	claw.rightPotentiometer = rightPotentiometer;
 	claw.rightSensorReversed = rightSensorReversed;
 	claw.gearRatio = gearRatio;
-	claw.leftBackValue = leftBackValue;
 	claw.leftGrabValue = leftGrabValue;
 	claw.leftOpenValue = leftOpenValue;
-	claw.rightBackValue = rightBackValue;
 	claw.rightGrabValue = rightGrabValue;
 	claw.rightOpenValue = rightOpenValue;
 	claw.leftLock = NULL;
@@ -124,6 +120,7 @@ clawInit(void)
 	// SmartMotorSetRpmSensor(claw.rightMotor, claw.rightPotentiometer, 6000 * claw.gearRatio, claw.rightSensorReversed);
 	claw.leftLock = PidControllerInit(0.004, 0.0001, 0.01, kVexSensorUndefined, 0);
 	claw.leftLock->enabled = 0;
+	// claw.rightLock = PidControllerInit(0.004, 0.0001, 0.01, kVexSensorUndefined, 0);
 	claw.rightLock = PidControllerInit(0.004, 0.0001, 0.01, kVexSensorUndefined, 0);
 	claw.rightLock->enabled = 0;
 	return;
@@ -162,14 +159,8 @@ clawThread(void *arg)
 		clawCmd = 0;
 		leftClawCmd = rightClawCmd = clawCmd;
 		if (clawCmd == 0) {
-			// claw back, open, and grab
-			if (vexControllerGet( Btn8U )) {
-				claw.isGrabbing = FALSE;
-				claw.leftLock->enabled = 1;
-				claw.leftLock->target_value = claw.leftBackValue;
-				claw.rightLock->enabled = 1;
-				claw.rightLock->target_value = claw.rightBackValue;
-			} else if (vexControllerGet( Btn6U ) || vexControllerGet( Btn6UXmtr2 )) {
+			// claw open and grab
+			if (vexControllerGet( Btn6U ) || vexControllerGet( Btn6UXmtr2 )) {
 				claw.isGrabbing = TRUE;
 				claw.leftLock->enabled = 1;
 				claw.leftLock->target_value = claw.leftGrabValue;
@@ -205,9 +196,9 @@ clawPIDUpdate(int16_t *leftCmd, int16_t *rightCmd)
 		claw.rightLock->target_value = vexAdcGet( claw.rightPotentiometer );
 	}
 	// prevent PID from trying to lock outside bounds
-	if (claw.leftLock->target_value > claw.leftGrabValue)
+	if (claw.leftLock->target_value < claw.leftGrabValue)
 		claw.leftLock->target_value = claw.leftGrabValue;
-	else if (claw.leftLock->target_value < claw.leftOpenValue)
+	else if (claw.leftLock->target_value > claw.leftOpenValue)
 		claw.leftLock->target_value = claw.leftOpenValue;
 	if (claw.rightLock->target_value < claw.rightGrabValue)
 		claw.rightLock->target_value = claw.rightGrabValue;
@@ -227,21 +218,31 @@ clawPIDUpdate(int16_t *leftCmd, int16_t *rightCmd)
 		: (claw.rightLock->target_value - claw.rightLock->sensor_value);
 	*rightCmd = PidControllerUpdate( claw.rightLock );
 	// limit output if error is small
-	if (fabs(claw.leftLock->error) < 100) {
+	if (fabs(claw.leftLock->error) > 500) {
+		*leftCmd = *leftCmd * 10;
+	} else if (fabs(claw.leftLock->error) < 100) {
 		*leftCmd = *leftCmd / 5;
-	} else if (!claw.isGrabbing && fabs(claw.leftLock->error) < 500) {
-		*leftCmd = *leftCmd / 3;
-	} else if (!claw.isGrabbing && fabs(claw.leftLock->error) < 2000) {
-		*leftCmd = *leftCmd / 2;
 	}
+	// if (fabs(claw.leftLock->error) < 100) {
+	// 	*leftCmd = *leftCmd / 5;
+	// } else if (!claw.isGrabbing && fabs(claw.leftLock->error) < 500) {
+	// 	*leftCmd = *leftCmd / 3;
+	// } else if (!claw.isGrabbing && fabs(claw.leftLock->error) < 2000) {
+	// 	*leftCmd = *leftCmd / 2;
+	// }
 	*leftCmd = clawSpeed( *leftCmd );
-	if (fabs(claw.rightLock->error) < 100) {
+	if (fabs(claw.rightLock->error) > 500) {
+		*rightCmd = *rightCmd * 10;
+	} else if (fabs(claw.rightLock->error) < 100) {
 		*rightCmd = *rightCmd / 5;
-	} else if (!claw.isGrabbing && fabs(claw.rightLock->error) < 500) {
-		*rightCmd = *rightCmd / 3;
-	} else if (!claw.isGrabbing && fabs(claw.rightLock->error) < 2000) {
-		*rightCmd = *rightCmd / 2;
 	}
+	// if (fabs(claw.rightLock->error) < 100) {
+	// 	*rightCmd = *rightCmd / 5;
+	// } else if (!claw.isGrabbing && fabs(claw.rightLock->error) < 500) {
+	// 	*rightCmd = *rightCmd / 3;
+	// } else if (!claw.isGrabbing && fabs(claw.rightLock->error) < 2000) {
+	// 	*rightCmd = *rightCmd / 2;
+	// }
 	*rightCmd = clawSpeed( *rightCmd );
 	return;
 }
