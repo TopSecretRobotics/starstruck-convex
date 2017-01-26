@@ -89,6 +89,19 @@ driveSetup(tVexMotor northeast, tVexMotor northwest, tVexMotor southeast, tVexMo
 }
 
 /*-----------------------------------------------------------------------------*/
+/** @brief      Initialize the drive system.                                   */
+/*-----------------------------------------------------------------------------*/
+void
+driveInit(void)
+{
+	// SmartMotorSetSlewRate(drive.southeast, 1);
+	// SmartMotorSetSlewRate(drive.southwest, 1);
+	SmartMotorLinkMotors(drive.southeast, drive.northeast);
+	SmartMotorLinkMotors(drive.southwest, drive.northwest);
+	return;
+}
+
+/*-----------------------------------------------------------------------------*/
 /** @brief      Start the drive system thread                                  */
 /*-----------------------------------------------------------------------------*/
 void
@@ -108,7 +121,8 @@ driveThread(void *arg)
 {
 	int16_t driveX = 0;
 	int16_t driveY = 0;
-	int16_t driveR = 0;
+	// int16_t driveR = 0;
+	bool_t immediate = TRUE;
 
 	// Unused
 	(void) arg;
@@ -117,14 +131,19 @@ driveThread(void *arg)
 	vexTaskRegister("drive");
 
 	while (!chThdShouldTerminate()) {
-		driveX = vexControllerGet( Ch4 );
-		driveY = vexControllerGet( Ch3 );
-		driveR = vexControllerGet( Ch1 ) + vexControllerGet( Ch1Xmtr2 );
+		driveX = driveSpeed( vexControllerGet( Ch4 ) );
+		driveY = driveSpeed( vexControllerGet( Ch3 ) );
+		// driveR = vexControllerGet( Ch1 ) + vexControllerGet( Ch1Xmtr2 );
 
-		SetMotor( drive.northeast, driveSpeed( driveY - driveX - driveR ) );
-		SetMotor( drive.northwest, driveSpeed( driveY + driveX + driveR ) );
-		SetMotor( drive.southeast, driveSpeed( driveY + driveX - driveR ) );
-		SetMotor( drive.southwest, driveSpeed( driveY - driveX + driveR ) );
+		SetMotor( drive.northeast, driveSpeed( driveY + driveX ), immediate );
+		SetMotor( drive.northwest, driveSpeed( driveY - driveX ), immediate );
+		SetMotor( drive.southeast, driveSpeed( driveY + driveX ), immediate );
+		SetMotor( drive.southwest, driveSpeed( driveY - driveX ), immediate );
+
+		// SetMotor( drive.northeast, driveSpeed( driveY - driveX - driveR ) );
+		// SetMotor( drive.northwest, driveSpeed( driveY + driveX + driveR ) );
+		// SetMotor( drive.southeast, driveSpeed( driveY + driveX - driveR ) );
+		// SetMotor( drive.southwest, driveSpeed( driveY - driveX + driveR ) );
 
 		// Don't hog cpu
 		vexSleep(25);
