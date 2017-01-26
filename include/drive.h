@@ -25,6 +25,7 @@ typedef struct drive_s {
 
 extern drive_t	*driveGetPtr(void);
 extern void		driveSetup(tVexMotor northeast, tVexMotor northwest, tVexMotor southeast, tVexMotor southwest);
+extern void		driveInit(void);
 extern void		driveStart(void);
 
 #ifdef __cplusplus
