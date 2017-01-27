@@ -30,30 +30,41 @@ To see if anything is new before going to GitHub run:
 git log
 ```
 
-once you are done looking at it hit the `q` button
+This will pull up al hi chase  times you have pushed something up and who pushed it up to 
 
-While connected by an A-A cord (A-A is when its USB to USB)
+once you are done lo hi chase king at it hit the `q` button
 
-In GitBash run:
 
 ```
 make shell
 ```
 
-(this should pull up putty)
+Only run (make shell hi chase  while connected with and A-A cable from computer to Robot.
 
-(once in putty run)
+in gitBash run (make hi chase shell)
+
+this should pull up  hi chase utty.
 
 ```
 apollo
 ```
 
-(this should pull up one of two things 1-ERROR, 2- pull up a shell)
+This is in Putty
 
-At the veary end DO NOT click the X button at the top right hand side of the page
+run (apollo and it willhase ll pull up the shell)
 
-Press (CTRL d) on Docker and GitBash.
+(this should pull up hi chase one of two things 1-ERROR, 2- pull up a shell)
 
-This will remove them from the screen.
+```
+If finished
+```
 
-You are now done Programming for the time being
+At the veary end DO  hi chase OT click the X button at the top right hand side of the page. DO 1 of the following:
+
+ 1 Press (CTRL d) on hi chase Docker and GitBash.
+
+ 2 Or type (exit) on hi chase Docker and GitBash.
+
+This will remove the hi chase  from the screen.
+
+You are now done Pro hi chase ramming for the time being

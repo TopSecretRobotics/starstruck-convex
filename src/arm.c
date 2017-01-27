@@ -128,6 +128,8 @@ armStart(void)
 	return;
 }
 
+#define IMMEDIATE_TIMEOUT 1000
+
 /*-----------------------------------------------------------------------------*/
 /** @brief      The arm system thread                                          */
 /** @param[in]  arg Unused                                                     */
@@ -138,6 +140,8 @@ armThread(void *arg)
 {
 	int16_t armCmd = 0;
 	bool_t immediate = FALSE;
+	int16_t immediateTimeout = 0;
+	bool_t isDown = FALSE;
 
 	// Unused
 	(void) arg;
@@ -146,13 +150,20 @@ armThread(void *arg)
 	vexTaskRegister("arm");
 
 	while (!chThdShouldTerminate()) {
-		armCmd = armSpeed( vexControllerGet( Ch2 ) );
+		armCmd = armSpeed( vexControllerGet( Ch2Xmtr2 ) );
 		// armCmd = armSpeed( vexControllerGet( Ch3Xmtr2 ) );
 		// armCmd = armSpeed( vexControllerGet( Ch3Xmtr2 ) );
 
 		// (void) armPIDUpdate;
 
+		if (immediateTimeout < 0) {
+			immediateTimeout = 0;
+		}
+
 		if (armCmd == 0) {
+			if (immediateTimeout > 0) {
+				immediateTimeout -= 25;
+			}
 			immediate = FALSE;
 			if (vexControllerGet( Btn7D ) || vexControllerGet( Btn7DXmtr2 )) {
 				arm.isDown = TRUE;
@@ -167,11 +178,26 @@ armThread(void *arg)
 			// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "error %f", arm.lock->error);
 		} else {
 			arm.isDown = FALSE;
-			immediate = TRUE;
+			immediate = FALSE;
 			// disable PID if driving
 			arm.lock->enabled = 0;
 			PidControllerUpdate( arm.lock ); // zero out PID
+			if (isDown == TRUE && armCmd > 0) {
+				isDown = FALSE;
+				immediateTimeout = 0;
+			} else if (isDown == FALSE && armCmd < 0) {
+				isDown = TRUE;
+				immediateTimeout = 0;
+			}
+			if (immediateTimeout >= IMMEDIATE_TIMEOUT) {
+				immediate = FALSE;
+			} else {
+				immediate = TRUE;
+				immediateTimeout += 25;
+			}
 		}
+
+
 
 		// SetMotor( arm.motor0, armCmd, FALSE );
 		// SetMotor( arm.motor1, armCmd, FALSE );

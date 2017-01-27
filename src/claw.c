@@ -155,8 +155,8 @@ clawThread(void *arg)
 	vexTaskRegister("claw");
 
 	while (!chThdShouldTerminate()) {
-		// clawCmd = clawSpeed( vexControllerGet( Ch2 ) );
-		clawCmd = 0;
+		clawCmd = clawSpeed( vexControllerGet( Ch2 ) );
+		//clawCmd = 0;
 		leftClawCmd = rightClawCmd = clawCmd;
 		if (clawCmd == 0) {
 			// claw open and grab
@@ -173,7 +173,7 @@ clawThread(void *arg)
 				claw.rightLock->enabled = 1;
 				claw.rightLock->target_value = claw.rightOpenValue;
 			}
-			clawPIDUpdate(&leftClawCmd, &rightClawCmd);
+			//clawPIDUpdate(&leftClawCmd, &rightClawCmd);
 		}
 		SetMotor( claw.leftMotor, leftClawCmd );
 		SetMotor( claw.rightMotor, rightClawCmd );
