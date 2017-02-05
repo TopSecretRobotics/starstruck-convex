@@ -25,6 +25,7 @@ typedef struct arm_s {
 	bool_t			reversed;
 	float			gearRatio;
 	int16_t			downValue;
+	int16_t			bumpValue;
 	int16_t			upValue;
 	pidController	*lock;
 	bool_t			isDown;
@@ -33,7 +34,7 @@ typedef struct arm_s {
 extern arm_t	*armGetPtr(void);
 extern void		armSetup(tVexMotor motor0, tVexMotor motor1, tVexMotor motor2,
 						 tVexAnalogPin potentiometer, bool_t reversed, float gearRatio,
-						 int16_t downValue, int16_t upValue);
+						 int16_t downValue, int16_t bumpValue, int16_t upValue);
 extern void		armInit(void);
 extern void		armStart(void);
 

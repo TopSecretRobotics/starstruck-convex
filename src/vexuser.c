@@ -69,18 +69,32 @@ static vexDigiCfg dConfig[kVexDigital_Num] = {
 	{ kVexDigital_12,	kVexSensorDigitalInput,		kVexConfigInput,		0 }
 };
 
+// // Motor configuration
+// static vexMotorCfg mConfig[kVexMotorNum] = {
+// 	{ kVexMotor_1,		kVexMotor393S,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_2 },
+// 	{ kVexMotor_2,		kVexMotorUndefined,		kVexMotorNormal,		kVexSensorNone,			0 },
+// 	{ kVexMotor_3,		kVexMotor393S,			kVexMotorNormal,		kVexSensorNone,			0 },
+// 	{ kVexMotor_4,		kVexMotor393T,			kVexMotorReversed,		kVexSensorNone,			0 },
+// 	{ kVexMotor_5,		kVexMotor393T,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_5 },
+// 	{ kVexMotor_6,		kVexMotor393T,			kVexMotorNormal,		kVexSensorNone,			0 },
+// 	{ kVexMotor_7,		kVexMotor393T,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_4 },
+// 	{ kVexMotor_8,		kVexMotor393T,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_3 },
+// 	{ kVexMotor_9,		kVexMotor393S,			kVexMotorReversed,		kVexSensorNone,			0 },
+// 	{ kVexMotor_10,		kVexMotor393S,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_1 }
+// };
+
 // Motor configuration
 static vexMotorCfg mConfig[kVexMotorNum] = {
-	{ kVexMotor_1,		kVexMotor393S,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_2 },
-	{ kVexMotor_2,		kVexMotorUndefined,		kVexMotorNormal,		kVexSensorNone,			0 },
-	{ kVexMotor_3,		kVexMotor393S,			kVexMotorNormal,		kVexSensorNone,			0 },
+	{ kVexMotor_1,		kVexMotor393S,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_1 },
+	{ kVexMotor_2,		kVexMotor393S,			kVexMotorNormal,		kVexSensorNone,			0 },
+	{ kVexMotor_3,		kVexMotorUndefined,		kVexMotorNormal,		kVexSensorNone,			0 },
 	{ kVexMotor_4,		kVexMotor393T,			kVexMotorReversed,		kVexSensorNone,			0 },
-	{ kVexMotor_5,		kVexMotor393T,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_5 },
-	{ kVexMotor_6,		kVexMotor393T,			kVexMotorNormal,		kVexSensorNone,			0 },
-	{ kVexMotor_7,		kVexMotor393T,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_4 },
+	{ kVexMotor_5,		kVexMotor393T,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_5 },
+	{ kVexMotor_6,		kVexMotor393T,			kVexMotorReversed,		kVexSensorNone,			0 },
+	{ kVexMotor_7,		kVexMotor393T,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_4 },
 	{ kVexMotor_8,		kVexMotor393T,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_3 },
 	{ kVexMotor_9,		kVexMotor393S,			kVexMotorReversed,		kVexSensorNone,			0 },
-	{ kVexMotor_10,		kVexMotor393S,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_1 }
+	{ kVexMotor_10,		kVexMotor393S,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_2 }
 };
 
 /*-----------------------------------------------------------------------------*/
@@ -95,10 +109,10 @@ vexUserSetup()
 	vexDigitalConfigure( dConfig, DIG_CONFIG_SIZE( dConfig ) );
 	vexMotorConfigure( mConfig, MOT_CONFIG_SIZE( mConfig ) );
 	driveSetup(
-		kVexMotor_3,			// drive northeast or front-right motor
+		kVexMotor_2,			// drive northeast or front-right motor
 		kVexMotor_9,			// drive northwest or front-left motor
-		kVexMotor_1,			// drive southeast or back-right motor
-		kVexMotor_10			// drive southwest or back-left motor
+		kVexMotor_10,			// drive southeast or back-right motor
+		kVexMotor_1				// drive southwest or back-left motor
 	);
 	// Arm Gearing: https://goo.gl/1UD1ne
 	armSetup(
@@ -107,23 +121,20 @@ vexUserSetup()
 		kVexMotor_8,			// arm bottom motor pair
 		kVexAnalog_1,			// arm potentiometer
 		FALSE,					// normal potentiometer (values increase with positive motor speed)
-		(3.0 / 7.0),			// gear ratio (3:7 or ~2600 ticks per rotation)
-		600,					// down potentiometer value
-		3300					// up potentiometer value
+		(1.0 / 5.0),			// gear ratio (1:7 or ~1200 ticks per rotation)
+		120,					// down potentiometer value
+		260,					// bump potentiometer value
+		2125					// up potentiometer value
 	);
 	// Claw Gearing: https://goo.gl/g99rX1
 	clawSetup(
 		kVexMotor_5,			// left claw motor
-		kVexAnalog_2,			// left claw potentiometer
-		FALSE,					// reversed left potentiometer (values decrease with positive motor speed)
 		kVexMotor_7,			// right claw motor
-		kVexAnalog_3,			// right claw potentiometer
-		FALSE,					// reversed right potentiometer (values decrease with positive motor speed)
-		(1.0 / 7.0),			// gear ratio (1:7 or ~857 ticks per rotation)
-		1400,					// left grab potentiometer value
-		2600,					// left open potentiometer value
-		1600,					// right grab potentiometer value
-		3000					// right open potentiometer value
+		kVexAnalog_2,			// claw potentiometer
+		TRUE,					// reversed potentiometer (values decrease with positive motor speed)
+		(1.0 / 5.0),			// gear ratio (1:7 or ~1200 ticks per rotation)
+		1920,					// grab potentiometer value
+		2900					// open potentiometer value
 	);
 }
 
@@ -141,7 +152,7 @@ vexUserInit()
 	SmartMotorsInit();
 	SmartMotorCurrentMonitorEnable();
 	// SmartMotorPtcMonitorEnable();
-	SmartMotorsAddPowerExtender(kVexMotor_3, kVexMotor_7, kVexMotor_8, kVexMotor_9);
+	SmartMotorsAddPowerExtender(kVexMotor_2, kVexMotor_7, kVexMotor_8, kVexMotor_9);
 	armInit();
 	clawInit();
 	driveInit();
@@ -180,8 +191,8 @@ vexAutonomous( void *arg )
 	drive_t *d= driveGetPtr();
 	claw_t  *c= clawGetPtr();
 	// arm_t   *a= armGetPtr();
-	 // Must call this
-	 vexTaskRegister("auton");
+	// Must call this
+	vexTaskRegister("auton");
 
 	while (1) {
 
@@ -457,11 +468,12 @@ vexOperator( void *arg )
 		// }
 		// SetMotor( kVexMotor_5, cmd, FALSE );
 		// SetMotor( kVexMotor_7, cmd, FALSE );
+		// SetMotor( kVexMotor_1, cmd, FALSE );
 		// SetMotor( kVexMotor_4, cmd, TRUE );
 		// SetMotor( kVexMotor_6, cmd, TRUE );
 		// SetMotor( kVexMotor_8, cmd, TRUE );
 		// SetMotor( kVexMotor_1, cmd );
-		// SetMotor( kVexMotor_3, cmd );
+		// SetMotor( kVexMotor_2, cmd );
 		// SetMotor( kVexMotor_9, cmd );
 		// SetMotor( kVexMotor_10, cmd );
 		// vexMotorSet( kVexMotor_1, cmd );

@@ -81,13 +81,14 @@ armGetPtr(void)
 /** @param[in]  potentiometer The arm potentiometer                            */
 /** @param[in]  reversed Is the arm potentiometer reversed?                    */
 /** @param[in]  gearRatio Gear ratio between motor and potentiometer           */
-/** @param[in]  restValue The arm potentiometer rest value                     */
-/** @param[in]  restInvertedValue The arm potentiometer rest value (inverted)  */
+/** @param[in]  downValue The arm potentiometer down value                     */
+/** @param[in]  bumpValue The arm potentiometer bump value                     */
+/** @param[in]  upValue The arm potentiometer up value                         */
 /*-----------------------------------------------------------------------------*/
 void
 armSetup(tVexMotor motor0, tVexMotor motor1, tVexMotor motor2,
 		 tVexAnalogPin potentiometer, bool_t reversed, float gearRatio,
-		 int16_t downValue, int16_t upValue)
+		 int16_t downValue, int16_t bumpValue, int16_t upValue)
 {
 	arm.motor0 = motor0;
 	arm.motor1 = motor1;
@@ -96,6 +97,7 @@ armSetup(tVexMotor motor0, tVexMotor motor1, tVexMotor motor2,
 	arm.reversed = reversed;
 	arm.gearRatio = gearRatio;
 	arm.downValue = downValue;
+	arm.bumpValue = bumpValue;
 	arm.upValue = upValue;
 	arm.lock = NULL;
 	arm.isDown = FALSE;
@@ -156,46 +158,52 @@ armThread(void *arg)
 
 		// (void) armPIDUpdate;
 
-		if (immediateTimeout < 0) {
-			immediateTimeout = 0;
-		}
+		immediate = TRUE;
 
-		if (armCmd == 0) {
-			if (immediateTimeout > 0) {
-				immediateTimeout -= 25;
-			}
-			immediate = FALSE;
-			if (vexControllerGet( Btn7D ) || vexControllerGet( Btn7DXmtr2 )) {
-				arm.isDown = TRUE;
-				arm.lock->enabled = 1;
-				arm.lock->target_value = arm.downValue;
-			} else if (vexControllerGet( Btn7U ) || vexControllerGet( Btn7UXmtr2 )) {
-				arm.isDown = FALSE;
-				arm.lock->enabled = 1;
-				arm.lock->target_value = arm.upValue;
-			}
-			armPIDUpdate(&armCmd);
-			// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "error %f", arm.lock->error);
-		} else {
-			arm.isDown = FALSE;
-			immediate = FALSE;
-			// disable PID if driving
-			arm.lock->enabled = 0;
-			PidControllerUpdate( arm.lock ); // zero out PID
-			if (isDown == TRUE && armCmd > 0) {
-				isDown = FALSE;
-				immediateTimeout = 0;
-			} else if (isDown == FALSE && armCmd < 0) {
-				isDown = TRUE;
-				immediateTimeout = 0;
-			}
-			if (immediateTimeout >= IMMEDIATE_TIMEOUT) {
-				immediate = FALSE;
-			} else {
-				immediate = TRUE;
-				immediateTimeout += 25;
-			}
-		}
+		// if (immediateTimeout < 0) {
+		// 	immediateTimeout = 0;
+		// }
+
+		// if (armCmd == 0) {
+		// 	if (immediateTimeout > 0) {
+		// 		immediateTimeout -= 25;
+		// 	}
+		// 	immediate = FALSE;
+		// 	if (vexControllerGet( Btn7D ) || vexControllerGet( Btn7DXmtr2 )) {
+		// 		arm.isDown = TRUE;
+		// 		arm.lock->enabled = 1;
+		// 		arm.lock->target_value = arm.downValue;
+		// 	} else if (vexControllerGet( Btn7U ) || vexControllerGet( Btn7UXmtr2 )) {
+		// 		arm.isDown = FALSE;
+		// 		arm.lock->enabled = 1;
+		// 		arm.lock->target_value = arm.upValue;
+		// 	} else if (vexControllerGet( Btn7L ) || vexControllerGet( Btn7LXmtr2 )) {
+		// 		arm.isDown = TRUE;
+		// 		arm.lock->enabled = 1;
+		// 		arm.lock->target_value = arm.bumpValue;
+		// 	}
+		// 	armPIDUpdate(&armCmd);
+		// 	// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "error %f", arm.lock->error);
+		// } else {
+		// 	arm.isDown = FALSE;
+		// 	immediate = FALSE;
+		// 	// disable PID if driving
+		// 	arm.lock->enabled = 0;
+		// 	PidControllerUpdate( arm.lock ); // zero out PID
+		// 	if (isDown == TRUE && armCmd > 0) {
+		// 		isDown = FALSE;
+		// 		immediateTimeout = 0;
+		// 	} else if (isDown == FALSE && armCmd < 0) {
+		// 		isDown = TRUE;
+		// 		immediateTimeout = 0;
+		// 	}
+		// 	if (immediateTimeout >= IMMEDIATE_TIMEOUT) {
+		// 		immediate = FALSE;
+		// 	} else {
+		// 		immediate = TRUE;
+		// 		immediateTimeout += 25;
+		// 	}
+		// }
 
 
 

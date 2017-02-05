@@ -16,6 +16,7 @@ static WORKING_AREA(waClaw, 512);
 
 // private functions
 static msg_t	clawThread(void *arg);
+static void		clawPIDSync(void);
 static void		clawPIDUpdate(int16_t *leftCmd, int16_t *rightCmd);
 
 // claw speed adjustment
@@ -76,34 +77,24 @@ clawGetPtr(void)
 /*-----------------------------------------------------------------------------*/
 /** @brief      Assign left/right motor and potentiometer to the claw system.  */
 /** @param[in]  leftMotor The left claw motor                                  */
-/** @param[in]  leftPotentiometer The left claw potentiometer                  */
-/** @param[in]  leftSensorReversed Is the left claw potentiometer reversed?    */
 /** @param[in]  rightMotor The right claw motor                                */
-/** @param[in]  rightPotentiometer The right claw potentiometer                */
-/** @param[in]  rightSensorReversed Is the right claw potentiometer reversed?  */
+/** @param[in]  potentiometer The claw potentiometer                           */
+/** @param[in]  sensorReversed Is the claw potentiometer reversed?             */
 /** @param[in]  gearRatio Gear ratio between motor and potentiometer           */
-/** @param[in]  leftGrabValue The left claw potentiometer grab value           */
-/** @param[in]  leftOpenValue The left claw potentiometer open value           */
-/** @param[in]  rightGrabValue The right claw potentiometer grab value         */
-/** @param[in]  rightOpenValue The right claw potentiometer open value         */
+/** @param[in]  grabValue The claw potentiometer grab value                    */
+/** @param[in]  openValue The claw potentiometer open value                    */
 /*-----------------------------------------------------------------------------*/
 void
-clawSetup(tVexMotor leftMotor, tVexAnalogPin leftPotentiometer, bool_t leftSensorReversed,
-		  tVexMotor rightMotor, tVexAnalogPin rightPotentiometer, bool_t rightSensorReversed,
-		  float gearRatio, int16_t leftGrabValue, int16_t leftOpenValue,
-		  int16_t rightGrabValue, int16_t rightOpenValue)
+clawSetup(tVexMotor leftMotor, tVexMotor rightMotor, tVexAnalogPin potentiometer,
+		  bool_t sensorReversed, float gearRatio, int16_t grabValue, int16_t openValue)
 {
 	claw.leftMotor = leftMotor;
-	claw.leftPotentiometer = leftPotentiometer;
-	claw.leftSensorReversed = leftSensorReversed;
 	claw.rightMotor = rightMotor;
-	claw.rightPotentiometer = rightPotentiometer;
-	claw.rightSensorReversed = rightSensorReversed;
+	claw.potentiometer = potentiometer;
+	claw.sensorReversed = sensorReversed;
 	claw.gearRatio = gearRatio;
-	claw.leftGrabValue = leftGrabValue;
-	claw.leftOpenValue = leftOpenValue;
-	claw.rightGrabValue = rightGrabValue;
-	claw.rightOpenValue = rightOpenValue;
+	claw.grabValue = grabValue;
+	claw.openValue = openValue;
 	claw.leftLock = NULL;
 	claw.rightLock = NULL;
 	claw.isGrabbing = FALSE;
@@ -163,17 +154,32 @@ clawThread(void *arg)
 			if (vexControllerGet( Btn6U ) || vexControllerGet( Btn6UXmtr2 )) {
 				claw.isGrabbing = TRUE;
 				claw.leftLock->enabled = 1;
-				claw.leftLock->target_value = claw.leftGrabValue;
+				claw.leftLock->target_value = claw.grabValue;
 				claw.rightLock->enabled = 1;
-				claw.rightLock->target_value = claw.rightGrabValue;
+				claw.rightLock->target_value = claw.grabValue;
 			} else if (vexControllerGet( Btn6D ) || vexControllerGet( Btn6DXmtr2 )) {
 				claw.isGrabbing = FALSE;
 				claw.leftLock->enabled = 1;
-				claw.leftLock->target_value = claw.leftOpenValue;
+				claw.leftLock->target_value = claw.openValue;
 				claw.rightLock->enabled = 1;
-				claw.rightLock->target_value = claw.rightOpenValue;
+				claw.rightLock->target_value = claw.openValue;
 			}
-			//clawPIDUpdate(&leftClawCmd, &rightClawCmd);
+			clawPIDUpdate(&leftClawCmd, &rightClawCmd);
+		} else {
+			claw.isGrabbing = FALSE;
+			claw.leftLock->enabled = 0;
+			claw.rightLock->enabled = 0;
+			claw.leftLock->target_value = claw.rightLock->target_value = vexAdcGet( claw.potentiometer );
+			PidControllerUpdate( claw.leftLock ); // zero out left PID
+			PidControllerUpdate( claw.rightLock ); // zero out right PID
+			// If claw is already grab or open, don't allow the motors to break the claw.
+			if ((leftClawCmd < 0 || rightClawCmd < 0) &&
+					((claw.leftLock->target_value >= (claw.openValue - 500)) || (claw.rightLock->target_value >= (claw.openValue - 500)))) {
+				leftClawCmd = rightClawCmd = 0;
+			} else if ((leftClawCmd > 0 || rightClawCmd > 0) &&
+					((claw.leftLock->target_value <= (claw.grabValue + 500)) || (claw.rightLock->target_value <= (claw.grabValue + 500)))) {
+				leftClawCmd = rightClawCmd = 0;
+			}
 		}
 		SetMotor( claw.leftMotor, leftClawCmd );
 		SetMotor( claw.rightMotor, rightClawCmd );
@@ -191,29 +197,29 @@ clawPIDUpdate(int16_t *leftCmd, int16_t *rightCmd)
 	// enable PID if not driving and already disabled
 	if (claw.leftLock->enabled == 0 || claw.rightLock->enabled == 0) {
 		claw.leftLock->enabled = 1;
-		claw.leftLock->target_value = vexAdcGet( claw.leftPotentiometer );
+		claw.leftLock->target_value = vexAdcGet( claw.potentiometer );
 		claw.rightLock->enabled = 1;
-		claw.rightLock->target_value = vexAdcGet( claw.rightPotentiometer );
+		claw.rightLock->target_value = vexAdcGet( claw.potentiometer );
 	}
 	// prevent PID from trying to lock outside bounds
-	if (claw.leftLock->target_value < claw.leftGrabValue)
-		claw.leftLock->target_value = claw.leftGrabValue;
-	else if (claw.leftLock->target_value > claw.leftOpenValue)
-		claw.leftLock->target_value = claw.leftOpenValue;
-	if (claw.rightLock->target_value < claw.rightGrabValue)
-		claw.rightLock->target_value = claw.rightGrabValue;
-	else if (claw.rightLock->target_value > claw.rightOpenValue)
-		claw.rightLock->target_value = claw.rightOpenValue;
+	if (claw.leftLock->target_value < claw.grabValue)
+		claw.leftLock->target_value = claw.grabValue;
+	else if (claw.leftLock->target_value > claw.openValue)
+		claw.leftLock->target_value = claw.openValue;
+	if (claw.rightLock->target_value < claw.grabValue)
+		claw.rightLock->target_value = claw.grabValue;
+	else if (claw.rightLock->target_value > claw.openValue)
+		claw.rightLock->target_value = claw.openValue;
 	// update PID
-	claw.leftLock->sensor_value = vexAdcGet( claw.leftPotentiometer );
+	claw.leftLock->sensor_value = vexAdcGet( claw.potentiometer );
 	claw.leftLock->error =
-		(!claw.leftSensorReversed)
+		(claw.sensorReversed)
 		? (claw.leftLock->sensor_value - claw.leftLock->target_value)
 		: (claw.leftLock->target_value - claw.leftLock->sensor_value);
 	*leftCmd = PidControllerUpdate( claw.leftLock );
-	claw.rightLock->sensor_value = vexAdcGet( claw.rightPotentiometer );
+	claw.rightLock->sensor_value = vexAdcGet( claw.potentiometer );
 	claw.rightLock->error =
-		(!claw.rightSensorReversed)
+		(claw.sensorReversed)
 		? (claw.rightLock->sensor_value - claw.rightLock->target_value)
 		: (claw.rightLock->target_value - claw.rightLock->sensor_value);
 	*rightCmd = PidControllerUpdate( claw.rightLock );

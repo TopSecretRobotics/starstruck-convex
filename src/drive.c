@@ -122,7 +122,8 @@ driveThread(void *arg)
 	int16_t driveX = 0;
 	int16_t driveY = 0;
 	// int16_t driveR = 0;
-	bool_t immediate = TRUE;
+	// bool_t immediate = TRUE;
+	bool_t immediate = FALSE;
 
 	// Unused
 	(void) arg;
