@@ -94,8 +94,10 @@ driveSetup(tVexMotor northeast, tVexMotor northwest, tVexMotor southeast, tVexMo
 void
 driveInit(void)
 {
-	// SmartMotorSetSlewRate(drive.southeast, 1);
-	// SmartMotorSetSlewRate(drive.southwest, 1);
+	SmartMotorSetSlewRate(drive.southeast, 50);
+	SmartMotorSetSlewRate(drive.southwest, 50);
+	// SmartMotorSetLimitCurent(drive.southeast, 3.0);
+	// SmartMotorSetLimitCurent(drive.southwest, 3.0);
 	SmartMotorLinkMotors(drive.southeast, drive.northeast);
 	SmartMotorLinkMotors(drive.southwest, drive.northwest);
 	return;
