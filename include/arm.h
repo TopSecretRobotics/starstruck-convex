@@ -44,7 +44,7 @@ extern void		armSetup(tVexMotor motor0, tVexMotor motor1, tVexMotor motor2,
 						 int16_t downValue, int16_t bumpValue, int16_t upValue);
 extern void		armInit(void);
 extern void		armStart(void);
-
+extern void 	armMove(int16_t cmd, bool_t immediate);
 #ifdef __cplusplus
 }
 #endif

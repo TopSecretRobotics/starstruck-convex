@@ -27,6 +27,7 @@ extern drive_t	*driveGetPtr(void);
 extern void		driveSetup(tVexMotor northeast, tVexMotor northwest, tVexMotor southeast, tVexMotor southwest);
 extern void		driveInit(void);
 extern void		driveStart(void);
+extern void		driveMove(int16_t x, int16_t y, bool_t immediate);
 
 #ifdef __cplusplus
 }

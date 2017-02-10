@@ -138,10 +138,7 @@ driveThread(void *arg)
 		driveY = driveSpeed( vexControllerGet( Ch3 ) );
 		// driveR = vexControllerGet( Ch1 ) + vexControllerGet( Ch1Xmtr2 );
 
-		SetMotor( drive.northeast, driveSpeed( driveY - driveX ), immediate );
-		SetMotor( drive.northwest, driveSpeed( driveY + driveX ), immediate );
-		SetMotor( drive.southeast, driveSpeed( driveY - driveX ), immediate );
-		SetMotor( drive.southwest, driveSpeed( driveY + driveX ), immediate );
+		driveMove(driveX, driveY, immediate);
 
 		// SetMotor( drive.northeast, driveSpeed( driveY - driveX - driveR ) );
 		// SetMotor( drive.northwest, driveSpeed( driveY + driveX + driveR ) );
@@ -153,4 +150,14 @@ driveThread(void *arg)
 	}
 
 	return ((msg_t) 0);
+}
+
+void
+driveMove(int16_t x, int16_t y, bool_t immediate)
+{
+	SetMotor( drive.northeast, driveSpeed( driveY - driveX ), immediate );
+	SetMotor( drive.northwest, driveSpeed( driveY + driveX ), immediate );
+	SetMotor( drive.southeast, driveSpeed( driveY - driveX ), immediate );
+	SetMotor( drive.southwest, driveSpeed( driveY + driveX ), immediate );
+	return;
 }

@@ -252,3 +252,10 @@ clawPIDUpdate(int16_t *leftCmd, int16_t *rightCmd)
 	*rightCmd = clawSpeed( *rightCmd );
 	return;
 }
+
+void
+clawMove(int16_t cmd, bool_t immediate)
+{
+	SetMotor( claw.leftMotor,  cmd, immediate );
+	SetMotor( claw.rightMotor, cmd, immediate );
+}

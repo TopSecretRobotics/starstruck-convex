@@ -39,11 +39,11 @@ once you are done lo hi chase king at it hit the `q` button
 make shell
 ```
 
-Only run (make shell hi chase  while connected with and A-A cable from computer to Robot.
+Only run (make shell while connected with and A-A cable from computer to Robot.
 
-in gitBash run (make hi chase shell)
+in gitBash run (make shell)
 
-this should pull up  hi chase utty.
+this should pull up putty.
 
 ```
 apollo
@@ -51,20 +51,20 @@ apollo
 
 This is in Putty
 
-run (apollo and it willhase ll pull up the shell)
+run (apollo and it will ll pull up the shell)
 
-(this should pull up hi chase one of two things 1-ERROR, 2- pull up a shell)
+(this should pull up one of two things 1-ERROR, 2- pull up a shell)
 
 ```
 If finished
 ```
 
-At the veary end DO  hi chase OT click the X button at the top right hand side of the page. DO 1 of the following:
+At the veary end DO OT click the X button at the top right hand side of the page. DO 1 of the following:
 
- 1 Press (CTRL d) on hi chase Docker and GitBash.
+ 1 Press (CTRL d) on Docker and GitBash.
 
- 2 Or type (exit) on hi chase Docker and GitBash.
+ 2 Or type (exit) on Docker and GitBash.
 
-This will remove the hi chase  from the screen.
+This will remove the from the screen.
 
-You are now done Pro hi chase ramming for the time being
+You are now done Pro ramming for the time being

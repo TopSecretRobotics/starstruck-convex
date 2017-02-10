@@ -188,158 +188,80 @@ msg_t
 vexAutonomous( void *arg )
 {
 	(void)arg;
-	drive_t *d= driveGetPtr();
-	claw_t  *c= clawGetPtr();
+	// drive_t *d= driveGetPtr();
+	// claw_t  *c= clawGetPtr();
 	// arm_t   *a= armGetPtr();
 	// Must call this
 	vexTaskRegister("auton");
 
 	while (1) {
 
-	// SetMotor(d-> northeast, 127);
-	// SetMotor(d-> northwest, 127);
-	// SetMotor(d-> southwest, 127);
-	// SetMotor(d-> southeast, 127);
-	// SetMotor(c-> leftMotor, -127);
-	// SetMotor(c-> rightMotor, 127);
+	// // turn left
+	// driveMove( -127,    0, TRUE );
+	// // turn right
+	// driveMove(  127,    0, TRUE );
+	// // forward
+	// driveMove(    0,  127, TRUE );
+	// // backward
+	// driveMove(    0, -127, TRUE );
 
-	// SetMotor()
+	// // Open claw
+	// clawMove(-127, TRUE);
+	// // Close claw
+	// clawMove(127, TRUE);
 
-	// vexSleep( 2000 );
+	// // raise arm
+	// armMove(127, TRUE);
+	// // lower arm
+	// armMove(-127, TRUE);
 
-	// SetMotor(c-> leftMotor, 0);
-	// SetMotor(c-> rightMotor, 0);
-	// SetMotor(d-> northeast, 0);
-	// SetMotor(d-> northwest, 0);
-	// SetMotor(d-> southwest, 0);
-	// SetMotor(d-> southeast, 0);
+	// open up claw and rotate left and unhook stableizers
+	driveMove( -127,    0, TRUE );
+	clawMove(  -127,  TRUE);
+	armMove(    127,  TRUE);
 
-	// vexSleep(13000)
+	vexSleep( 500 );
 
-	// ;
+	//put arm down to the ground
+	armMove( -127,  TRUE);
 
-	 	// Drive in NW direction for 2 sec.
-	 	SetMotor(d-> southwest, 127);
-	 	SetMotor(d-> northeast, 127);
+	vexSleep( 500 );
 
-	 	vexSleep(2000);
+	// drive forward and turn off claw
+	driveMove(  0,  127, TRUE );
+	clawMove(	0, TRUE);
 
-	 	// Stop drive
-	 	SetMotor(d-> southwest, 0);
-	 	SetMotor(d-> northeast, 0);
+	vexSleep( 2000 );
 
-	 	// Open claw for .5 sec
-	 	SetMotor(c-> leftMotor, 127);
-	 	SetMotor(c-> rightMotor, 127);
+	// turn right
+	driveMove(  127,    0, TRUE );
 
-	 	vexSleep( 500 );
+	vexSleep( 1000 );
+	//close claw and move forward
+	clawMove(127, TRUE);
+	driveMove(    0,  127, TRUE );
 
-	 	SetMotor(d-> northeast, 127);
-		SetMotor(d-> northwest, 127);
-		SetMotor(d-> southwest, 127);
-		SetMotor(d-> southeast, 127);
+	vexSleep( 1000);
+	// go in 180 degrees
+	driveMove(  127,    0, TRUE );
 
-	 	vexSleep( 500 );
+	vexSleep( 500 );
+	// back up against fence
+	driveMove(    0, -127, TRUE );
 
-	 	// Stop claws
-	 	SetMotor(c-> leftMotor, 0);
-	 	SetMotor(c-> rightMotor, 0);
+	vexSleep( 2000 );
+	// stop moving and raise arm
+	driveMove( 0,    0, TRUE );
 
-	 	//vexSleep( 500 );
+	armMove(127, TRUE);
 
-	 	// Don't hog cpu
-	 	vexSleep( 12000 );
-	}
+	vexSleep( 1000 );
+	// put arm down
+	armMove(-127, TRUE);
 
-	// While (2) {
+	vexSleep( 6500);
 
-	// 	SetMotor(d-> northeast, -127);
-	// 	SetMotor(d-> northwest,  127);
-	// 	SetMotor(d-> southwest, -127);
-	// 	SetMotor(d-> southeast,  127);
 
-	// 	vexSleep( 1000 );
-
-	// 	SetMotor(d-> northeast,  0);
-	// 	SetMotor(d-> northwest,  0);
-	// 	SetMotor(d-> southwest,  0);
-	// 	SetMotor(d-> southeast,  0);
-
-	// 	SetMotor(c-> leftMotor,  50);
-	// 	SetMotor(c-> rightMotor, 50);
-
-	// 	vexSleep( 500 );
-
-	// 	SetMotor(c-> leftMotor,  0);
-	// 	SetMotor(c-> rightMotor, 0);
-
-	// 	SetMotor(d-> northeast, 127);
-	// 	SetMotor(d-> northwest, 127);
-	// 	SetMotor(d-> southwest, 127);
-	// 	SetMotor(d-> southeast, 127);
-
-	// 	vexSleep( 2000 );
-
-	// 	SetMotor(d-> northeast, 0);
-	// 	SetMotor(d-> northwest, 0);
-	// 	SetMotor(d-> southwest, 0);
-	// 	SetMotor(d-> southeast, 0);
-
-	// 	SetMotor(c-> leftMotor,  -100);
-	// 	SetMotor(c-> rightMotor, -100);
-
-	// 	vexSleep( 500 );
-
-	// 	SetMotor(d-> northeast,  127);
-	// 	SetMotor(d-> northwest, -127);
-	// 	SetMotor(d-> southwest,  127);
-	// 	SetMotor(d-> southeast, -127);
-
-	// 	vexSleep( 1000 );
-
-	// 	SetMotor(d-> northeast, 0);
-	// 	SetMotor(d-> northwest, 0);
-	// 	SetMotor(d-> southwest, 0);
-	// 	SetMotor(d-> southeast, 0);
-
-	// 	SetMotor(d-> northeast, 127);
-	// 	SetMotor(d-> northwest, 127);
-	// 	SetMotor(d-> southwest, 127);
-	// 	SetMotor(d-> southeast, 127);
-
-	// 	vexSleep( 1000 );
-
-	// 	SetMotor(d-> northeast, 0);
-	// 	SetMotor(d-> northwest, 0);
-	// 	SetMotor(d-> southwest, 0);
-	// 	SetMotor(d-> southeast, 0);
-
-	// 	SetMotor(d-> northeast, -127);
-	// 	SetMotor(d-> northwest,  127);
-	// 	SetMotor(d-> southwest, -127);
-	// 	SetMotor(d-> southeast,  127);
-
-	// 	vexSleep( 1000 );
-
-	// 	SetMotor(d-> northeast, -127);
-	// 	SetMotor(d-> northwest, -127);
-	// 	SetMotor(d-> southwest, -127);
-	// 	SetMotor(d-> southeast, -127);
-
-	// 	vexSleep( 500 );
-
-	// 	SetMotor(a-> motor0, 127);
-	// 	SetMotor(a-> motor1, 127);
-	// 	SetMotor(a-> motor2, 127);
-
-	// 	vexSleep( 3000 );
-
-	// 	SetMotor(a-> motor0, -127);
-	// 	SetMotor(a-> motor1, -127);
-	// 	SetMotor(a-> motor2, -127);
-
-	// 	vexSleep( 4500)
-	// }
 
 	return (msg_t)0;
 }

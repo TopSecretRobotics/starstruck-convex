@@ -217,3 +217,11 @@ armPIDUpdate(int16_t *cmd)
 	*cmd = armSpeed( *cmd );
 	return;
 }
+
+void
+armMove(int16_t cmd, bool_t immediate);
+{
+	SetMotor( arm.motor0, cmd, immediate );
+	SetMotor( arm.motor1, cmd, immediate );
+	SetMotor( arm.motor2, cmd, immediate );
+}

@@ -35,7 +35,7 @@ extern void		clawSetup(tVexMotor leftMotor, tVexMotor rightMotor, tVexAnalogPin 
 						  bool_t sensorReversed, float gearRatio, int16_t grabValue, int16_t openValue);
 extern void		clawInit(void);
 extern void		clawStart(void);
-
+extern void		clawMove(int16_t cmd, bool_t immediate);
 #ifdef __cplusplus
 }
 #endif
