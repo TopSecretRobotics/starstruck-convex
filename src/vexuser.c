@@ -247,6 +247,9 @@ autonomousMode0(void)
 	// // lower arm
 	// armMove(-127, TRUE);
 
+
+	// Left Tile
+
 	// open claw and raise arm
 	clawMove(  -127,  TRUE);
 	armMove(    127,  TRUE);
@@ -291,7 +294,7 @@ autonomousMode0(void)
 	armMove(127, TRUE);
 
 	vexSleep( 1000 );
-	// put arm down
+	// put arm down	//
 	armMove(-127, TRUE);
 
 	vexSleep( 8000 );
@@ -302,7 +305,56 @@ autonomousMode0(void)
 static void
 autonomousMode1(void)
 {
-	vexSleep( 15000 );
+	// (2) Right tile
+		// open claw and raise arm
+	clawMove(  -127,  TRUE);
+	armMove(    127,  TRUE);
+
+	vexSleep( 200 );
+	// lower arm
+	armMove( -127, TRUE);
+
+	vexSleep( 200 );
+	// stop arm
+	armMove( 0, TRUE);
+
+	vexSleep( 100 );
+	// stop claw
+	clawMove( 0, TRUE);
+
+	// drive forward
+	driveMove(  0,  127, TRUE );
+
+	vexSleep( 2000 );
+
+	// turn left
+	driveMove(  -127,    0, TRUE );
+
+	vexSleep( 1000 );
+	//close claw and move forward
+	clawMove(127, TRUE);
+	driveMove(    0,  127, TRUE );
+
+	vexSleep( 1000 );
+	// go in 180 degrees
+	driveMove(  127,    0, TRUE );
+
+	vexSleep( 500 );
+	// back up against fence
+	driveMove(    0, -127, TRUE );
+
+	vexSleep( 2000 );
+	// stop moving and raise arm
+	driveMove( 0,    0, TRUE );
+
+	armMove(127, TRUE);
+
+	vexSleep( 1000 );
+	// put arm down
+	armMove(-127, TRUE);
+
+	vexSleep( 8000 );
+
 
 	return;
 }
@@ -310,7 +362,86 @@ autonomousMode1(void)
 static void
 autonomousMode2(void)
 {
-	vexSleep( 15000 );
+		// (3) Left tile
+		// open claw and raise arm
+	clawMove(  -127,  TRUE);
+	armMove(    127,  TRUE);
+
+	vexSleep( 200 );
+	// lower arm
+	armMove( -127, TRUE);
+
+	vexSleep( 200 );
+	// stop arm
+	armMove( 0, TRUE);
+
+	vexSleep( 100 );
+	// stop claw
+	clawMove( 0, TRUE);
+
+	// drive forward
+	driveMove(  0,  127, TRUE );
+
+	vexSleep( 2000 );
+
+	// turn right
+	driveMove(  127,    0, TRUE );
+
+	vexSleep( 1000 );
+	//close claw & move forward
+	clawMove(127, TRUE);
+	driveMove(    0,  127, TRUE );
+
+	vexSleep( 1000 );
+	// go in 180 degrees
+	driveMove(  127,    0, TRUE );
+
+	vexSleep( 500 );
+	// back up against fence
+	driveMove(    0, -127, TRUE );
+
+	vexSleep( 2000 );
+	// stop moving & raise arm
+	driveMove( 0,    0, TRUE );
+	armMove(127, TRUE);
+
+	vexSleep( 1000 );
+	// put arm down	& open claw
+	clawMove(-127, TRUE);
+	armMove(-127, TRUE);
+	driveMove( 0,  127, TRUE);
+
+	vexSleep( 1000 );
+	// Turn right
+	driveMove(-127, 0, TRUE);
+
+	vexSleep( 1000 );
+	// drive forward
+	driveMove(0, 127, TRUE);
+
+	vexSleep( 2000 );
+	// close claw
+	clawMove(127, TRUE);
+
+	vexSleep( 500 );
+	// left turn
+	driveMove(-127, 0, TRUE);
+
+	vexSleep( 1000 );
+	// backup & dump
+	driveMove(0, -127, TRUE);
+	armMove(127, TRUE);
+
+	vexSleep( 1000);
+	// stop drive & drop arm
+	driveMove(0, 0, TRUE);
+	armMove(-127, TRUE);
+
+	vexSleep( 1000 );
+	// stop arm
+	armMove(0, TRUE);
+
+	vexSleep( 0 );
 
 	return;
 }
@@ -318,20 +449,99 @@ autonomousMode2(void)
 static void
 autonomousMode3(void)
 {
-	vexSleep( 15000 );
+
+	// open claw and raise arm
+	clawMove(  -127,  TRUE);
+	armMove(    127,  TRUE);
+
+	vexSleep( 200 );
+	// lower arm
+	armMove( -127, TRUE);
+
+	vexSleep( 200 );
+	// stop arm
+	armMove( 0, TRUE);
+
+	vexSleep( 100 );
+	// stop claw
+	clawMove( 0, TRUE);
+
+	// drive forward
+	driveMove(  0,  127, TRUE );
+
+	vexSleep( 2000 );
+
+	// turn left
+	driveMove(  -127,    0, TRUE );
+
+	vexSleep( 1000 );
+	//close claw & move forward
+	clawMove(127, TRUE);
+	driveMove(    0,  127, TRUE );
+
+	vexSleep( 1000 );
+	// go in 180 degrees
+	driveMove(  127,    0, TRUE );
+
+	vexSleep( 500 );
+	// back up against fence
+	driveMove(    0, -127, TRUE );
+
+	vexSleep( 2000 );
+	// stop moving & raise arm
+	driveMove( 0,    0, TRUE );
+	armMove(127, TRUE);
+
+	vexSleep( 1000 );
+	// put arm down	& open claw
+	clawMove(-127, TRUE);
+	armMove(-127, TRUE);
+	driveMove( 0,  127, TRUE);
+
+	vexSleep( 1000 );
+	// Turn left
+	driveMove(127, 0, TRUE);
+
+	vexSleep( 1000 );
+	// drive forward
+	driveMove(0, 127, TRUE);
+
+	vexSleep( 2000 );
+	// close claw
+	clawMove(127, TRUE);
+
+	vexSleep( 500 );
+	// left right
+	driveMove(127, 0, TRUE);
+
+	vexSleep( 1000 );
+	// backup & dump
+	driveMove(0, -127, TRUE);
+	armMove(127, TRUE);
+
+	vexSleep( 1000);
+	// stop drive & drop arm
+	driveMove(0, 0, TRUE);
+	armMove(-127, TRUE);
+
+	vexSleep( 1000 );
+	// stop arm
+	armMove(0, TRUE);
+
+	vexSleep( 0 );
 
 	return;
 }
 
-// #define MotorDriveL     kVexMotor_1
-// #define MotorDriveR     kVexMotor_10
+// #define MotorDriveL kVexMotor_1
+// #define MotorDriveR kVexMotor_10
 // #define MotorWheel kVexMotor_2
 // #define MotorClaw kVexMotor_3
 // #define MotorWrist kVexMotor_6
 
 // #define MENU_ARROW_U	"\xC5"
 // #define MENU_ARROW_D	"\xC6"
-// #define MENU_ARROW_R	"\xC7"
+// #define MENU_ARROW_R	"\xC7"-
 // #define MENU_ARROW_L	"\xC8"
 // #define MENU_TRIANGLE_R	"\xF6"
 // #define MENU_TRIANGLE_L	"\xF7"

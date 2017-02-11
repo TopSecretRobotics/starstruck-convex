@@ -131,16 +131,16 @@ lcdRead(void)
 
 		switch (lcd.mode) {
 			case kLcdMode0:
-				vexLcdSet( lcd.display, VEX_LCD_LINE_1, "Mode 0          " );
+				vexLcdSet( lcd.display, VEX_LCD_LINE_1, "M0"			   );
 				break;
 			case kLcdMode1:
-				vexLcdSet( lcd.display, VEX_LCD_LINE_1, "Mode 1          " );
+				vexLcdSet( lcd.display, VEX_LCD_LINE_1, "M1"			   );
 				break;
 			case kLcdMode2:
-				vexLcdSet( lcd.display, VEX_LCD_LINE_1, "Mode 2          " );
+				vexLcdSet( lcd.display, VEX_LCD_LINE_1, "M2"			   );
 				break;
 			case kLcdMode3:
-				vexLcdSet( lcd.display, VEX_LCD_LINE_1, "Mode 3          " );
+				vexLcdSet( lcd.display, VEX_LCD_LINE_1, "M3"			   );
 				break;
 			default:
 				vexLcdSet( lcd.display, VEX_LCD_LINE_1, "Error           " );
@@ -167,19 +167,19 @@ lcdWrite(void)
 	switch (lcd.mode) {
 		case kLcdMode0:
 			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
-			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "Top Secret    M0" );
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "Top Secret   4sL" );
 			break;
 		case kLcdMode1:
 			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
-			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "Top Secret    M1" );
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "Top Secret   4sR" );
 			break;
 		case kLcdMode2:
 			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
-			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "Top Secret    M2" );
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "Top Secret  4scL" );
 			break;
 		case kLcdMode3:
 			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
-			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "Top Secret    M3" );
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "Top Secret  4scR" );
 			break;
 		default:
 			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
