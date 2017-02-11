@@ -17,6 +17,13 @@
 extern "C" {
 #endif
 
+typedef enum {
+	armPositionUnknown = -1,
+	armPositionDown = 0,
+	armPositionBump,
+	armPositionUp
+} armPosition_t;
+
 typedef struct arm_s {
 	tVexMotor		motor0;
 	tVexMotor		motor1;
@@ -27,8 +34,8 @@ typedef struct arm_s {
 	int16_t			downValue;
 	int16_t			bumpValue;
 	int16_t			upValue;
+	armPosition_t	position;
 	pidController	*lock;
-	bool_t			isDown;
 } arm_t;
 
 extern arm_t	*armGetPtr(void);

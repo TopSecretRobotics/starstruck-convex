@@ -99,8 +99,8 @@ armSetup(tVexMotor motor0, tVexMotor motor1, tVexMotor motor2,
 	arm.downValue = downValue;
 	arm.bumpValue = bumpValue;
 	arm.upValue = upValue;
+	arm.position = armPositionUnknown;
 	arm.lock = NULL;
-	arm.isDown = FALSE;
 	return;
 }
 
@@ -142,8 +142,6 @@ armThread(void *arg)
 {
 	int16_t armCmd = 0;
 	bool_t immediate = FALSE;
-	int16_t immediateTimeout = 0;
-	bool_t isDown = FALSE;
 
 	// Unused
 	(void) arg;
@@ -153,63 +151,31 @@ armThread(void *arg)
 
 	while (!chThdShouldTerminate()) {
 		armCmd = armSpeed( vexControllerGet( Ch2Xmtr2 ) );
-		// armCmd = armSpeed( vexControllerGet( Ch3Xmtr2 ) );
-		// armCmd = armSpeed( vexControllerGet( Ch3Xmtr2 ) );
 
-		// (void) armPIDUpdate;
+		if (armCmd == 0) {
+			immediate = FALSE;
+			if (vexControllerGet( Btn7D ) || vexControllerGet( Btn7DXmtr2 )) {
+				arm.position = armPositionDown;
+				arm.lock->enabled = 1;
+				arm.lock->target_value = arm.downValue;
+			} else if (vexControllerGet( Btn7L ) || vexControllerGet( Btn7LXmtr2 )) {
+				arm.position = armPositionBump;
+				arm.lock->enabled = 1;
+				arm.lock->target_value = arm.bumpValue;
+			} else if (vexControllerGet( Btn7U ) || vexControllerGet( Btn7UXmtr2 )) {
+				arm.position = armPositionUp;
+				arm.lock->enabled = 1;
+				arm.lock->target_value = arm.upValue;
+			}
+			armPIDUpdate(&armCmd);
+		} else {
+			arm.position = armPositionUnknown;
+			immediate = TRUE;
+			// disable PID if joystick driving
+			arm.lock->enabled = 0;
+			PidControllerUpdate( arm.lock ); // zero out PID
 
-		immediate = TRUE;
-
-		// if (immediateTimeout < 0) {
-		// 	immediateTimeout = 0;
-		// }
-
-		// if (armCmd == 0) {
-		// 	if (immediateTimeout > 0) {
-		// 		immediateTimeout -= 25;
-		// 	}
-		// 	immediate = FALSE;
-		// 	if (vexControllerGet( Btn7D ) || vexControllerGet( Btn7DXmtr2 )) {
-		// 		arm.isDown = TRUE;
-		// 		arm.lock->enabled = 1;
-		// 		arm.lock->target_value = arm.downValue;
-		// 	} else if (vexControllerGet( Btn7U ) || vexControllerGet( Btn7UXmtr2 )) {
-		// 		arm.isDown = FALSE;
-		// 		arm.lock->enabled = 1;
-		// 		arm.lock->target_value = arm.upValue;
-		// 	} else if (vexControllerGet( Btn7L ) || vexControllerGet( Btn7LXmtr2 )) {
-		// 		arm.isDown = TRUE;
-		// 		arm.lock->enabled = 1;
-		// 		arm.lock->target_value = arm.bumpValue;
-		// 	}
-		// 	armPIDUpdate(&armCmd);
-		// 	// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "error %f", arm.lock->error);
-		// } else {
-		// 	arm.isDown = FALSE;
-		// 	immediate = FALSE;
-		// 	// disable PID if driving
-		// 	arm.lock->enabled = 0;
-		// 	PidControllerUpdate( arm.lock ); // zero out PID
-		// 	if (isDown == TRUE && armCmd > 0) {
-		// 		isDown = FALSE;
-		// 		immediateTimeout = 0;
-		// 	} else if (isDown == FALSE && armCmd < 0) {
-		// 		isDown = TRUE;
-		// 		immediateTimeout = 0;
-		// 	}
-		// 	if (immediateTimeout >= IMMEDIATE_TIMEOUT) {
-		// 		immediate = FALSE;
-		// 	} else {
-		// 		immediate = TRUE;
-		// 		immediateTimeout += 25;
-		// 	}
-		// }
-
-
-
-		// SetMotor( arm.motor0, armCmd, FALSE );
-		// SetMotor( arm.motor1, armCmd, FALSE );
-		// SetMotor( arm.motor2, armCmd, FALSE );
+		}
 
 		SetMotor( arm.motor0, armCmd, immediate );
 		SetMotor( arm.motor1, armCmd, immediate );
@@ -242,20 +208,12 @@ armPIDUpdate(int16_t *cmd)
 		? (arm.lock->sensor_value - arm.lock->target_value)
 		: (arm.lock->target_value - arm.lock->sensor_value);
 	*cmd = PidControllerUpdate( arm.lock );
-	// limit output if error is small
-	// if (fabs(arm.lock->error) < 100) {
-	// 	*cmd = *cmd / 10;
-	// } else if (fabs(arm.lock->error) < 300) {
-	// 	*cmd = *cmd / 5;
-	// } else
-	if (arm.isDown && fabs(arm.lock->error) > 50) {
+	// adjust output if down or up position requested
+	if (arm.position == armPositionDown && fabs(arm.lock->error) > 50) {
+		*cmd = *cmd * 100;
+	} else if (arm.position == armPositionUp && fabs(arm.lock->error) > 50) {
 		*cmd = *cmd * 100;
 	}
-	// if (arm.isDown) {
-	// 	*cmd = *cmd / 1;
-	// // } else if (fabs(arm.lock->error) < 700) {
-	// // 	*cmd = *cmd / 2;
-	// }
 	*cmd = armSpeed( *cmd );
 	return;
 }
