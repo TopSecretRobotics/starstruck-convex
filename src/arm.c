@@ -207,14 +207,14 @@ armPIDUpdate(int16_t *cmd)
 		: (arm.lock->target_value - arm.lock->sensor_value);
 	*cmd = PidControllerUpdate( arm.lock );
 	// adjust output if down or up position requested
-	if (arm.position == armPositionDown && fabs(arm.lock->error) > 50) {
-		*cmd = *cmd * 100;
-	} else if (arm.position == armPositionUp && fabs(arm.lock->error) > 50) {
-		*cmd = *cmd * 100;
-	}
-	*cmd = armSpeed( *cmd );
-	return;
-}
+// 	if (arm.position == armPositionDown && fabs(arm.lock->error) > 50) {
+// 		*cmd = *cmd * 100;
+// 	} else if (arm.position == armPositionUp && fabs(arm.lock->error) > 50) {
+// 		*cmd = *cmd * 100;
+// 	}
+// 	*cmd = armSpeed( *cmd );
+// 	return;
+// }
 
 void
 armMove(int16_t cmd, bool_t immediate)

@@ -215,21 +215,24 @@ vexAutonomous( void *arg )
 		// // lower arm
 		// armMove(-127, TRUE);
 
-		// open up claw and rotate left and unhook stableizers
-		driveMove( -127,    0, TRUE );
+		// open claw and raise arm
 		clawMove(  -127,  TRUE);
 		armMove(    127,  TRUE);
 
-		vexSleep( 500 );
+		vexSleep( 200 );
+		// lower arm
+		armMove( -127, TRUE);
 
-		//put arm down to the ground
-		armMove( -127,  TRUE);
+		vexSleep( 200 );
+		// stop arm
+		armMove( 0, TRUE);
 
-		vexSleep( 500 );
+		vexSleep( 100 );
+		// stop claw
+		clawMove( 0, TRUE);
 
-		// drive forward and turn off claw
+		// drive forward
 		driveMove(  0,  127, TRUE );
-		clawMove(	0, TRUE);
 
 		vexSleep( 2000 );
 
@@ -259,7 +262,7 @@ vexAutonomous( void *arg )
 		// put arm down
 		armMove(-127, TRUE);
 
-		vexSleep( 6500 );
+		vexSleep( 8000 );
 
 	}
 
