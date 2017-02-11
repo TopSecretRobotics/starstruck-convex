@@ -177,9 +177,7 @@ armThread(void *arg)
 
 		}
 
-		SetMotor( arm.motor0, armCmd, immediate );
-		SetMotor( arm.motor1, armCmd, immediate );
-		SetMotor( arm.motor2, armCmd, immediate );
+		armMove( armCmd, immediate );
 
 		// Don't hog cpu
 		vexSleep(25);
@@ -219,7 +217,7 @@ armPIDUpdate(int16_t *cmd)
 }
 
 void
-armMove(int16_t cmd, bool_t immediate);
+armMove(int16_t cmd, bool_t immediate)
 {
 	SetMotor( arm.motor0, cmd, immediate );
 	SetMotor( arm.motor1, cmd, immediate );

@@ -155,9 +155,9 @@ driveThread(void *arg)
 void
 driveMove(int16_t x, int16_t y, bool_t immediate)
 {
-	SetMotor( drive.northeast, driveSpeed( driveY - driveX ), immediate );
-	SetMotor( drive.northwest, driveSpeed( driveY + driveX ), immediate );
-	SetMotor( drive.southeast, driveSpeed( driveY - driveX ), immediate );
-	SetMotor( drive.southwest, driveSpeed( driveY + driveX ), immediate );
+	SetMotor( drive.northeast, driveSpeed( y - x ), immediate );
+	SetMotor( drive.northwest, driveSpeed( y + x ), immediate );
+	SetMotor( drive.southeast, driveSpeed( y - x ), immediate );
+	SetMotor( drive.southwest, driveSpeed( y + x ), immediate );
 	return;
 }

@@ -16,7 +16,6 @@ static WORKING_AREA(waClaw, 512);
 
 // private functions
 static msg_t	clawThread(void *arg);
-static void		clawPIDSync(void);
 static void		clawPIDUpdate(int16_t *leftCmd, int16_t *rightCmd);
 
 // claw speed adjustment

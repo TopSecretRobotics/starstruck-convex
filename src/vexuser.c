@@ -196,72 +196,72 @@ vexAutonomous( void *arg )
 
 	while (1) {
 
-	// // turn left
-	// driveMove( -127,    0, TRUE );
-	// // turn right
-	// driveMove(  127,    0, TRUE );
-	// // forward
-	// driveMove(    0,  127, TRUE );
-	// // backward
-	// driveMove(    0, -127, TRUE );
+		// // turn left
+		// driveMove( -127,    0, TRUE );
+		// // turn right
+		// driveMove(  127,    0, TRUE );
+		// // forward
+		// driveMove(    0,  127, TRUE );
+		// // backward
+		// driveMove(    0, -127, TRUE );
 
-	// // Open claw
-	// clawMove(-127, TRUE);
-	// // Close claw
-	// clawMove(127, TRUE);
+		// // Open claw
+		// clawMove(-127, TRUE);
+		// // Close claw
+		// clawMove(127, TRUE);
 
-	// // raise arm
-	// armMove(127, TRUE);
-	// // lower arm
-	// armMove(-127, TRUE);
+		// // raise arm
+		// armMove(127, TRUE);
+		// // lower arm
+		// armMove(-127, TRUE);
 
-	// open up claw and rotate left and unhook stableizers
-	driveMove( -127,    0, TRUE );
-	clawMove(  -127,  TRUE);
-	armMove(    127,  TRUE);
+		// open up claw and rotate left and unhook stableizers
+		driveMove( -127,    0, TRUE );
+		clawMove(  -127,  TRUE);
+		armMove(    127,  TRUE);
 
-	vexSleep( 500 );
+		vexSleep( 500 );
 
-	//put arm down to the ground
-	armMove( -127,  TRUE);
+		//put arm down to the ground
+		armMove( -127,  TRUE);
 
-	vexSleep( 500 );
+		vexSleep( 500 );
 
-	// drive forward and turn off claw
-	driveMove(  0,  127, TRUE );
-	clawMove(	0, TRUE);
+		// drive forward and turn off claw
+		driveMove(  0,  127, TRUE );
+		clawMove(	0, TRUE);
 
-	vexSleep( 2000 );
+		vexSleep( 2000 );
 
-	// turn right
-	driveMove(  127,    0, TRUE );
+		// turn right
+		driveMove(  127,    0, TRUE );
 
-	vexSleep( 1000 );
-	//close claw and move forward
-	clawMove(127, TRUE);
-	driveMove(    0,  127, TRUE );
+		vexSleep( 1000 );
+		//close claw and move forward
+		clawMove(127, TRUE);
+		driveMove(    0,  127, TRUE );
 
-	vexSleep( 1000);
-	// go in 180 degrees
-	driveMove(  127,    0, TRUE );
+		vexSleep( 1000 );
+		// go in 180 degrees
+		driveMove(  127,    0, TRUE );
 
-	vexSleep( 500 );
-	// back up against fence
-	driveMove(    0, -127, TRUE );
+		vexSleep( 500 );
+		// back up against fence
+		driveMove(    0, -127, TRUE );
 
-	vexSleep( 2000 );
-	// stop moving and raise arm
-	driveMove( 0,    0, TRUE );
+		vexSleep( 2000 );
+		// stop moving and raise arm
+		driveMove( 0,    0, TRUE );
 
-	armMove(127, TRUE);
+		armMove(127, TRUE);
 
-	vexSleep( 1000 );
-	// put arm down
-	armMove(-127, TRUE);
+		vexSleep( 1000 );
+		// put arm down
+		armMove(-127, TRUE);
 
-	vexSleep( 6500);
+		vexSleep( 6500 );
 
-
+	}
 
 	return (msg_t)0;
 }
