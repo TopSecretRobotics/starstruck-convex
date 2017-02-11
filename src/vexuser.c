@@ -52,6 +52,7 @@
 #include "drive.h"
 #include "arm.h"
 #include "claw.h"
+#include "lcd.h"
 
 // Digital I/O configuration
 static vexDigiCfg dConfig[kVexDigital_Num] = {
@@ -136,6 +137,7 @@ vexUserSetup()
 		1920,					// grab potentiometer value
 		2900					// open potentiometer value
 	);
+	lcdSetup(VEX_LCD_DISPLAY_1);
 }
 
 /*-----------------------------------------------------------------------------*/
@@ -157,6 +159,8 @@ vexUserInit()
 	clawInit();
 	driveInit();
 	SmartMotorRun();
+	lcdInit();
+	lcdStart();
 }
 
 // static inline int
@@ -181,6 +185,12 @@ vexUserInit()
 /*-----------------------------------------------------------------------------*/
 /** @brief      Autonomous                                                     */
 /*-----------------------------------------------------------------------------*/
+
+static void autonomousMode0(void);
+static void autonomousMode1(void);
+static void autonomousMode2(void);
+static void autonomousMode3(void);
+
 /** @details
  *  This thread is started when the autonomous period is started
  */
@@ -188,85 +198,129 @@ msg_t
 vexAutonomous( void *arg )
 {
 	(void)arg;
-	// drive_t *d= driveGetPtr();
-	// claw_t  *c= clawGetPtr();
-	// arm_t   *a= armGetPtr();
+
 	// Must call this
 	vexTaskRegister("auton");
 
 	while (1) {
-
-		// // turn left
-		// driveMove( -127,    0, TRUE );
-		// // turn right
-		// driveMove(  127,    0, TRUE );
-		// // forward
-		// driveMove(    0,  127, TRUE );
-		// // backward
-		// driveMove(    0, -127, TRUE );
-
-		// // Open claw
-		// clawMove(-127, TRUE);
-		// // Close claw
-		// clawMove(127, TRUE);
-
-		// // raise arm
-		// armMove(127, TRUE);
-		// // lower arm
-		// armMove(-127, TRUE);
-
-		// open claw and raise arm
-		clawMove(  -127,  TRUE);
-		armMove(    127,  TRUE);
-
-		vexSleep( 200 );
-		// lower arm
-		armMove( -127, TRUE);
-
-		vexSleep( 200 );
-		// stop arm
-		armMove( 0, TRUE);
-
-		vexSleep( 100 );
-		// stop claw
-		clawMove( 0, TRUE);
-
-		// drive forward
-		driveMove(  0,  127, TRUE );
-
-		vexSleep( 2000 );
-
-		// turn right
-		driveMove(  127,    0, TRUE );
-
-		vexSleep( 1000 );
-		//close claw and move forward
-		clawMove(127, TRUE);
-		driveMove(    0,  127, TRUE );
-
-		vexSleep( 1000 );
-		// go in 180 degrees
-		driveMove(  127,    0, TRUE );
-
-		vexSleep( 500 );
-		// back up against fence
-		driveMove(    0, -127, TRUE );
-
-		vexSleep( 2000 );
-		// stop moving and raise arm
-		driveMove( 0,    0, TRUE );
-
-		armMove(127, TRUE);
-
-		vexSleep( 1000 );
-		// put arm down
-		armMove(-127, TRUE);
-
-		vexSleep( 8000 );
-
+		switch (lcdGetMode()) {
+			case kLcdMode0:
+				autonomousMode0();
+				break;
+			case kLcdMode1:
+				autonomousMode1();
+				break;
+			case kLcdMode2:
+				autonomousMode2();
+				break;
+			case kLcdMode3:
+				autonomousMode3();
+				break;
+			default:
+				vexSleep(25); // wait 25ms before retry
+				break;
+		}
 	}
 
 	return (msg_t)0;
+}
+
+static void
+autonomousMode0(void)
+{
+	// // turn left
+	// driveMove( -127,    0, TRUE );
+	// // turn right
+	// driveMove(  127,    0, TRUE );
+	// // forward
+	// driveMove(    0,  127, TRUE );
+	// // backward
+	// driveMove(    0, -127, TRUE );
+
+	// // Open claw
+	// clawMove(-127, TRUE);
+	// // Close claw
+	// clawMove(127, TRUE);
+
+	// // raise arm
+	// armMove(127, TRUE);
+	// // lower arm
+	// armMove(-127, TRUE);
+
+	// open claw and raise arm
+	clawMove(  -127,  TRUE);
+	armMove(    127,  TRUE);
+
+	vexSleep( 200 );
+	// lower arm
+	armMove( -127, TRUE);
+
+	vexSleep( 200 );
+	// stop arm
+	armMove( 0, TRUE);
+
+	vexSleep( 100 );
+	// stop claw
+	clawMove( 0, TRUE);
+
+	// drive forward
+	driveMove(  0,  127, TRUE );
+
+	vexSleep( 2000 );
+
+	// turn right
+	driveMove(  127,    0, TRUE );
+
+	vexSleep( 1000 );
+	//close claw and move forward
+	clawMove(127, TRUE);
+	driveMove(    0,  127, TRUE );
+
+	vexSleep( 1000 );
+	// go in 180 degrees
+	driveMove(  127,    0, TRUE );
+
+	vexSleep( 500 );
+	// back up against fence
+	driveMove(    0, -127, TRUE );
+
+	vexSleep( 2000 );
+	// stop moving and raise arm
+	driveMove( 0,    0, TRUE );
+
+	armMove(127, TRUE);
+
+	vexSleep( 1000 );
+	// put arm down
+	armMove(-127, TRUE);
+
+	vexSleep( 8000 );
+
+	return;
+}
+
+static void
+autonomousMode1(void)
+{
+	vexSleep( 15000 );
+
+	return;
+}
+
+static void
+autonomousMode2(void)
+{
+	vexSleep( 15000 );
+
+	return;
+}
+
+static void
+autonomousMode3(void)
+{
+	vexSleep( 15000 );
+
+	return;
 }
 
 // #define MotorDriveL     kVexMotor_1
@@ -335,8 +389,8 @@ vexOperator( void *arg )
 		// vexDigitalPinSet( kVexDigital_1, (blink++ >> 3) & 1);
 
 		// status on LCD of encoder and sonar
-		vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
-		vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "Top Secret Robot" );
+		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
+		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "Top Secret Robot" );
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "m4 %3d m6 %3d", vexMotorGet( kVexMotor_4 ), vexMotorGet( kVexMotor_6 ) );
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "claw pot %4d", vexAdcGet( clawGetPtr()->potentiometer ) );
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "wrist pot %4d", vexAdcGet( kVexAnalog_2 ) );
