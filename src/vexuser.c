@@ -134,8 +134,8 @@ vexUserSetup()
 		kVexAnalog_2,			// claw potentiometer
 		TRUE,					// reversed potentiometer (values decrease with positive motor speed)
 		(1.0 / 5.0),			// gear ratio (1:7 or ~1200 ticks per rotation)
-		1920,					// grab potentiometer value
-		2900					// open potentiometer value
+		1100,					// grab potentiometer value
+		2650					// open potentiometer value
 	);
 	lcdSetup(VEX_LCD_DISPLAY_1);
 }
@@ -190,6 +190,8 @@ static void autonomousMode0(void);
 static void autonomousMode1(void);
 static void autonomousMode2(void);
 static void autonomousMode3(void);
+static void autonomousMode4(void);
+static void autonomousMode5(void);
 
 /** @details
  *  This thread is started when the autonomous period is started
@@ -216,10 +218,17 @@ vexAutonomous( void *arg )
 			case kLcdMode3:
 				autonomousMode3();
 				break;
+			case kLcdMode4:
+				autonomousMode4();
+				break;
+			case kLcdMode5:
+				autonomousMode5();
+				break;
 			default:
 				vexSleep(25); // wait 25ms before retry
 				break;
 		}
+	break;
 	}
 
 	return (msg_t)0;
@@ -248,17 +257,18 @@ autonomousMode0(void)
 	// armMove(-127, TRUE);
 
 
+
 	// Left Tile
 
 	// open claw and raise arm
 	clawMove(  -127,  TRUE);
 	armMove(    127,  TRUE);
 
-	vexSleep( 200 );
+	vexSleep( 1000 );
 	// lower arm
 	armMove( -127, TRUE);
 
-	vexSleep( 200 );
+	vexSleep( 1000 );
 	// stop arm
 	armMove( 0, TRUE);
 
@@ -269,7 +279,7 @@ autonomousMode0(void)
 	// drive forward
 	driveMove(  0,  127, TRUE );
 
-	vexSleep( 2000 );
+	vexSleep( 3000 );
 
 	// turn right
 	driveMove(  127,    0, TRUE );
@@ -297,63 +307,74 @@ autonomousMode0(void)
 	// put arm down	//
 	armMove(-127, TRUE);
 
-	vexSleep( 8000 );
-
+	vexSleep( 5000 );
 	return;
+
 }
 
 static void
 autonomousMode1(void)
 {
-	// (2) Right tile
-		// open claw and raise arm
-	clawMove(  -127,  TRUE);
-	armMove(    127,  TRUE);
-
-	vexSleep( 200 );
-	// lower arm
-	armMove( -127, TRUE);
-
-	vexSleep( 200 );
-	// stop arm
-	armMove( 0, TRUE);
-
-	vexSleep( 100 );
-	// stop claw
-	clawMove( 0, TRUE);
-
-	// drive forward
-	driveMove(  0,  127, TRUE );
-
-	vexSleep( 2000 );
-
-	// turn left
-	driveMove(  -127,    0, TRUE );
-
-	vexSleep( 1000 );
-	//close claw and move forward
-	clawMove(127, TRUE);
-	driveMove(    0,  127, TRUE );
-
-	vexSleep( 1000 );
-	// go in 180 degrees
-	driveMove(  127,    0, TRUE );
+	armMove(  127, TRUE);
+	clawMove(-127, TRUE);
 
 	vexSleep( 500 );
-	// back up against fence
-	driveMove(    0, -127, TRUE );
+	// drive forward & stop: claw, arm
+	armMove(-127,    TRUE);
+	driveMove(0, 127, TRUE);
 
-	vexSleep( 2000 );
-	// stop moving and raise arm
-	driveMove( 0,    0, TRUE );
+	vexSleep( 5000 );
 
-	armMove(127, TRUE);
+	// driveMove(0, 0, TRUE);
+	// // (2) Right tile
+	// 	// open claw and raise arm
+	// clawMove(  -127,  TRUE);
+	// armMove(    127,  TRUE);
 
-	vexSleep( 1000 );
-	// put arm down
-	armMove(-127, TRUE);
+	// vexSleep( 200 );
+	// // lower arm
+	// armMove( -127, TRUE);
 
-	vexSleep( 8000 );
+	// vexSleep( 200 );
+	// // stop arm
+	// armMove( 0, TRUE);
+
+	// vexSleep( 100 );
+	// // stop claw
+	// clawMove( 0, TRUE);
+
+	// // drive forward
+	// driveMove(  0,  127, TRUE );
+
+	// vexSleep( 2000 );
+
+	// // turn left
+	// driveMove(  -127,    0, TRUE );
+
+	// vexSleep( 1000 );
+	// //close claw and move forward
+	// clawMove(127, TRUE);
+	// driveMove(    0,  127, TRUE );
+
+	// vexSleep( 1000 );
+	// // go in 180 degrees
+	// driveMove(  127,    0, TRUE );
+
+	// vexSleep( 500 );
+	// // back up against fence
+	// driveMove(    0, -127, TRUE );
+
+	// vexSleep( 2000 );
+	// // stop moving and raise arm
+	// driveMove( 0,    0, TRUE );
+
+	// armMove(127, TRUE);
+
+	// vexSleep( 1000 );
+	// // put arm down
+	// armMove(-127, TRUE);
+
+	// vexSleep( 8000 );
 
 
 	return;
@@ -533,6 +554,77 @@ autonomousMode3(void)
 	return;
 }
 
+static void
+autonomousMode4(void)
+{
+	// lift arm & open claw
+	armMove(  127, TRUE);
+	clawMove(-127, TRUE);
+
+	vexSleep( 500 );
+	// drive forward & stop: claw, arm
+	driveMove(0, 127,TRUE);
+	armMove(  0,     TRUE);
+	clawMove( 0,     TRUE);
+
+	vexSleep( 2000 );
+	// close claw & turn right
+	clawMove( 127, TRUE);
+	driveMove(127, 0, TRUE);
+
+	vexSleep(1500);
+	// backup
+	driveMove(0, -127, TRUE);
+
+	vexSleep(2000);
+	// raise arm & stop drive
+	driveMove(0, 0, TRUE);
+	armMove(127, TRUE);
+
+	vexSleep(1500);
+	// open claw
+	clawMove(-127, TRUE);
+
+	vexSleep(7500);
+
+	return;
+}
+
+static void
+autonomousMode5(void)
+{
+	// lift arm & open claw
+	armMove(  127, TRUE);
+	clawMove(-127, TRUE);
+
+	vexSleep( 500 );
+	// drive forward & stop: claw, arm
+	driveMove(0, 127,TRUE);
+	armMove(  0,     TRUE);
+	clawMove( 0,     TRUE);
+
+	vexSleep( 2000 );
+	// close claw & turn left
+	clawMove( 127, TRUE);
+	driveMove(-127, 0, TRUE);
+
+	vexSleep(1500);
+	// backup
+	driveMove(0, -127, TRUE);
+
+	vexSleep(2000);
+	// raise arm & stop drive
+	driveMove(0, 0, TRUE);
+	armMove(127, TRUE);
+
+	vexSleep(1500);
+	// open claw
+	clawMove(-127, TRUE);
+
+	vexSleep(7500);
+
+	return;
+}
 // #define MotorDriveL kVexMotor_1
 // #define MotorDriveR kVexMotor_10
 // #define MotorWheel kVexMotor_2

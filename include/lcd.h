@@ -22,7 +22,8 @@ typedef enum {
 	kLcdMode1,
 	kLcdMode2,
 	kLcdMode3,
-
+	kLcdMode4,
+	kLcdMode5,
 	kLcdModeNumber
 } kLcdModeType;
 
