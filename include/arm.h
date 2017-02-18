@@ -35,6 +35,7 @@ typedef struct arm_s {
 	int16_t			bumpValue;
 	int16_t			upValue;
 	armPosition_t	position;
+	bool_t			locked;
 	pidController	*lock;
 } arm_t;
 
@@ -45,6 +46,12 @@ extern void		armSetup(tVexMotor motor0, tVexMotor motor1, tVexMotor motor2,
 extern void		armInit(void);
 extern void		armStart(void);
 extern void 	armMove(int16_t cmd, bool_t immediate);
+extern void		armLock(void);
+extern void		armUnlock(void);
+extern void		armLockDown(void);
+extern void		armLockBump(void);
+extern void		armLockUp(void);
+extern void		armLockCurrent(void);
 #ifdef __cplusplus
 }
 #endif

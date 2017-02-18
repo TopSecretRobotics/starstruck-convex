@@ -17,10 +17,11 @@ extern "C" {
 #endif
 
 typedef struct drive_s {
-	tVexMotor northeast;
-	tVexMotor northwest;
-	tVexMotor southeast;
-	tVexMotor southwest;
+	tVexMotor	northeast;
+	tVexMotor	northwest;
+	tVexMotor	southeast;
+	tVexMotor	southwest;
+	bool_t 		locked;
 } drive_t;
 
 extern drive_t	*driveGetPtr(void);
@@ -28,6 +29,8 @@ extern void		driveSetup(tVexMotor northeast, tVexMotor northwest, tVexMotor sout
 extern void		driveInit(void);
 extern void		driveStart(void);
 extern void		driveMove(int16_t x, int16_t y, bool_t immediate);
+extern void		driveLock(void);
+extern void		driveUnlock(void);
 
 #ifdef __cplusplus
 }

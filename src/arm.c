@@ -100,6 +100,7 @@ armSetup(tVexMotor motor0, tVexMotor motor1, tVexMotor motor2,
 	arm.bumpValue = bumpValue;
 	arm.upValue = upValue;
 	arm.position = armPositionUnknown;
+	arm.locked = TRUE;
 	arm.lock = NULL;
 	return;
 }
@@ -132,6 +133,15 @@ armStart(void)
 
 #define IMMEDIATE_TIMEOUT 1000
 
+static int
+limitSpeed(int speed, int limit)
+{
+	if (abs(speed) <= limit) {
+		return 0;
+	}
+	return speed;
+}
+
 /*-----------------------------------------------------------------------------*/
 /** @brief      The arm system thread                                          */
 /** @param[in]  arg Unused                                                     */
@@ -150,34 +160,35 @@ armThread(void *arg)
 	vexTaskRegister("arm");
 
 	while (!chThdShouldTerminate()) {
-		armCmd = armSpeed( vexControllerGet( Ch2Xmtr2 ) );
+		if (arm.locked) {
+			armCmd = armSpeed( limitSpeed( vexControllerGet( Ch2Xmtr2 ), 20 ) );
 
-		if (armCmd == 0) {
-			immediate = FALSE;
-			if (vexControllerGet( Btn7D ) || vexControllerGet( Btn7DXmtr2 )) {
-				arm.position = armPositionDown;
-				arm.lock->enabled = 1;
-				arm.lock->target_value = arm.downValue;
-			} else if (vexControllerGet( Btn7L ) || vexControllerGet( Btn7LXmtr2 )) {
-				arm.position = armPositionBump;
-				arm.lock->enabled = 1;
-				arm.lock->target_value = arm.bumpValue;
-			} else if (vexControllerGet( Btn7U ) || vexControllerGet( Btn7UXmtr2 )) {
-				arm.position = armPositionUp;
-				arm.lock->enabled = 1;
-				arm.lock->target_value = arm.upValue;
+			if (armCmd == 0) {
+				immediate = FALSE;
+				if (vexControllerGet( Btn7D ) || vexControllerGet( Btn7DXmtr2 )) {
+					arm.position = armPositionDown;
+					arm.lock->enabled = 1;
+					arm.lock->target_value = arm.downValue;
+				} else if (vexControllerGet( Btn7L ) || vexControllerGet( Btn7LXmtr2 )) {
+					arm.position = armPositionBump;
+					arm.lock->enabled = 1;
+					arm.lock->target_value = arm.bumpValue;
+				} else if (vexControllerGet( Btn7U ) || vexControllerGet( Btn7UXmtr2 )) {
+					arm.position = armPositionUp;
+					arm.lock->enabled = 1;
+					arm.lock->target_value = arm.upValue;
+				}
+				armPIDUpdate(&armCmd);
+			} else {
+				arm.position = armPositionUnknown;
+				immediate = TRUE;
+				// disable PID if joystick driving
+				arm.lock->enabled = 0;
+				PidControllerUpdate( arm.lock ); // zero out PID
 			}
-			armPIDUpdate(&armCmd);
-		} else {
-			arm.position = armPositionUnknown;
-			immediate = TRUE;
-			// disable PID if joystick driving
-			arm.lock->enabled = 0;
-			PidControllerUpdate( arm.lock ); // zero out PID
 
+			armMove( armCmd, immediate );
 		}
-
-		armMove( armCmd, immediate );
 
 		// Don't hog cpu
 		vexSleep(25);
@@ -195,10 +206,17 @@ armPIDUpdate(int16_t *cmd)
 		arm.lock->target_value = vexAdcGet( arm.potentiometer );
 	}
 	// prevent PID from trying to lock outside bounds
-	if (arm.lock->target_value < arm.downValue)
-		arm.lock->target_value = arm.downValue;
-	else if (arm.lock->target_value > arm.upValue)
-		arm.lock->target_value = arm.upValue;
+	if (arm.reversed) {
+		if (arm.lock->target_value > arm.downValue)
+			arm.lock->target_value = arm.downValue;
+		else if (arm.lock->target_value < arm.upValue)
+			arm.lock->target_value = arm.upValue;
+	} else {
+		if (arm.lock->target_value < arm.downValue)
+			arm.lock->target_value = arm.downValue;
+		else if (arm.lock->target_value > arm.upValue)
+			arm.lock->target_value = arm.upValue;
+	}
 	// update PID
 	arm.lock->sensor_value = vexAdcGet( arm.potentiometer );
 	arm.lock->error =
@@ -222,4 +240,52 @@ armMove(int16_t cmd, bool_t immediate)
 	SetMotor( arm.motor0, cmd, immediate );
 	SetMotor( arm.motor1, cmd, immediate );
 	SetMotor( arm.motor2, cmd, immediate );
+}
+
+void
+armLock(void)
+{
+	arm.locked = TRUE;
+}
+
+void
+armUnlock(void)
+{
+	arm.locked = FALSE;
+}
+
+void
+armLockDown(void)
+{
+	armLock();
+	arm.position = armPositionDown;
+	arm.lock->enabled = 1;
+	arm.lock->target_value = arm.downValue;
+}
+
+void
+armLockBump(void)
+{
+	armLock();
+	arm.position = armPositionBump;
+	arm.lock->enabled = 1;
+	arm.lock->target_value = arm.bumpValue;
+}
+
+void
+armLockUp(void)
+{
+	armLock();
+	arm.position = armPositionUp;
+	arm.lock->enabled = 1;
+	arm.lock->target_value = arm.upValue;
+}
+
+void
+armLockCurrent(void)
+{
+	armLock();
+	arm.position = armPositionUnknown;
+	arm.lock->enabled = 1;
+	arm.lock->target_value = vexAdcGet( arm.potentiometer );
 }

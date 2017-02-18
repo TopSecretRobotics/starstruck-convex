@@ -20,6 +20,9 @@ user_param *userp;
 // working area for lcd task
 static WORKING_AREA(waLcd, 512);
 
+static Thread	*lcdThreadPointer = NULL;
+static long		lcdThreadDeadTimer = 0;
+
 // private functions
 static msg_t	lcdThread(void *arg);
 static void		lcdRead(void);
@@ -71,7 +74,13 @@ lcdInit(void)
 void
 lcdStart(void)
 {
-	chThdCreateStatic(waLcd, sizeof(waLcd), NORMALPRIO - 1, lcdThread, NULL);
+	if ((chTimeNow() - lcdThreadDeadTimer) > 300) {
+		lcdThreadPointer = NULL;
+	}
+	if (lcdThreadPointer != NULL) {
+		return;
+	}
+	lcdThreadPointer = chThdCreateStatic(waLcd, sizeof(waLcd), NORMALPRIO - 1, lcdThread, NULL);
 	return;
 }
 
@@ -94,11 +103,15 @@ lcdThread(void *arg)
 	vexLcdClearLine( lcd.display, VEX_LCD_LINE_2 );
 
 	while (!chThdShouldTerminate()) {
+		lcdThreadDeadTimer = chTimeNow();
 		lcdRead();
 		lcdWrite();
 		// Don't hog cpu
 		vexSleep(25);
 	}
+
+	lcdThreadPointer = NULL;
+	lcdThreadDeadTimer = 0;
 
 	return ((msg_t) 0);
 }
@@ -154,6 +167,7 @@ lcdRead(void)
 		}
 
 		do {
+			lcdThreadDeadTimer = chTimeNow();
 			lcd.buttons = vexLcdButtonGet( lcd.display );
 			vexSleep(10);
 		} while ( lcd.buttons != kLcdButtonNone );

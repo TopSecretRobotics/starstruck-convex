@@ -85,6 +85,7 @@ driveSetup(tVexMotor northeast, tVexMotor northwest, tVexMotor southeast, tVexMo
 	drive.northwest = northwest;
 	drive.southeast = southeast;
 	drive.southwest = southwest;
+	drive.locked = TRUE;
 	return;
 }
 
@@ -94,8 +95,12 @@ driveSetup(tVexMotor northeast, tVexMotor northwest, tVexMotor southeast, tVexMo
 void
 driveInit(void)
 {
-	SmartMotorSetSlewRate(drive.southeast, 50);
-	SmartMotorSetSlewRate(drive.southwest, 50);
+	// SmartMotorSetSlewRate(drive.northeast, SMLIB_MOTOR_FAST_SLEW_RATE);
+	// SmartMotorSetSlewRate(drive.northwest, SMLIB_MOTOR_FAST_SLEW_RATE);
+	// SmartMotorSetSlewRate(drive.southeast, SMLIB_MOTOR_FAST_SLEW_RATE);
+	// SmartMotorSetSlewRate(drive.southwest, SMLIB_MOTOR_FAST_SLEW_RATE);
+	// SmartMotorSetLimitCurent(drive.northeast, 3.0);
+	// SmartMotorSetLimitCurent(drive.northwest, 3.0);
 	// SmartMotorSetLimitCurent(drive.southeast, 3.0);
 	// SmartMotorSetLimitCurent(drive.southwest, 3.0);
 	SmartMotorLinkMotors(drive.southeast, drive.northeast);
@@ -113,6 +118,63 @@ driveStart(void)
 	return;
 }
 
+// typedef struct immediate_timeout_s {
+// 	bool_t		decay;
+// 	bool_t		immediate;
+// 	int16_t		timeout;
+// 	int16_t		limit;
+// } immediate_timeout_t;
+
+// static immediate_timeout_t	it;
+
+// static inline bool_t
+// isLimitTripped(void)
+// {
+// 	if (SmartMotorGetPtr(drive.northeast)->limit_tripped || SmartMotorGetPtr(drive.northwest)->limit_tripped || SmartMotorGetPtr(drive.southeast)->limit_tripped || SmartMotorGetPtr(drive.southwest)->limit_tripped) {
+// 		return TRUE;
+// 	}
+// 	return FALSE;
+// }
+
+// static void
+// immediateTimeoutStart(void)
+// {
+// 	if (it.decay) {
+// 		it.timeout -= 50;
+// 		it.immediate = FALSE;
+// 		if (it.timeout <= 0) {
+// 			it.decay = FALSE;
+// 			it.immediate = TRUE;
+// 			it.timeout = 0;
+// 		}
+// 	} else {
+// 		it.timeout += 25;
+// 		it.immediate = TRUE;
+// 		if (it.timeout >= it.limit) {
+// 			it.decay = TRUE;
+// 			it.immediate = FALSE;
+// 			it.timeout = it.limit;
+// 		}
+// 	}
+// }
+
+// static void
+// immediateTimeoutStop(void)
+// {
+// 	it.immediate = FALSE;
+// 	it.timeout -= 50;
+// 	if (it.timeout <= 0) {
+// 		it.decay = FALSE;
+// 		it.timeout = 0;
+// 	}
+// }
+
+static inline bool_t
+maybeImmediate(void)
+{
+	return TRUE;
+}
+
 /*-----------------------------------------------------------------------------*/
 /** @brief      The drive system thread                                        */
 /** @param[in]  arg Unused                                                     */
@@ -123,9 +185,13 @@ driveThread(void *arg)
 {
 	int16_t driveX = 0;
 	int16_t driveY = 0;
+	// it.decay = FALSE;
+	// it.immediate = FALSE;
+	// it.timeout = 0;
+	// it.limit = 2000;
 	// int16_t driveR = 0;
 	// bool_t immediate = TRUE;
-	bool_t immediate = TRUE;
+	// bool_t immediate = FALSE;
 
 	// Unused
 	(void) arg;
@@ -134,16 +200,25 @@ driveThread(void *arg)
 	vexTaskRegister("drive");
 
 	while (!chThdShouldTerminate()) {
-		driveX = driveSpeed( vexControllerGet( Ch4 ) );
-		driveY = driveSpeed( vexControllerGet( Ch3 ) );
-		// driveR = vexControllerGet( Ch1 ) + vexControllerGet( Ch1Xmtr2 );
+		if (drive.locked) {
+			driveX = driveSpeed( vexControllerGet( Ch4 ) );
+			driveY = driveSpeed( vexControllerGet( Ch3 ) );
+			// if (abs(driveX) > 0 || abs(driveY) > 0) {
+			// 	immediateTimeoutStart();
+			// 	// immediate = TRUE;
+			// } else {
+			// 	immediateTimeoutStop();
+			// 	// immediate = FALSE;
+			// }
+			// driveR = vexControllerGet( Ch1 ) + vexControllerGet( Ch1Xmtr2 );
 
-		driveMove(driveX, driveY, immediate);
+			driveMove(driveX, driveY, maybeImmediate());
 
-		// SetMotor( drive.northeast, driveSpeed( driveY - driveX - driveR ) );
-		// SetMotor( drive.northwest, driveSpeed( driveY + driveX + driveR ) );
-		// SetMotor( drive.southeast, driveSpeed( driveY + driveX - driveR ) );
-		// SetMotor( drive.southwest, driveSpeed( driveY - driveX + driveR ) );
+			// SetMotor( drive.northeast, driveSpeed( driveY - driveX - driveR ) );
+			// SetMotor( drive.northwest, driveSpeed( driveY + driveX + driveR ) );
+			// SetMotor( drive.southeast, driveSpeed( driveY + driveX - driveR ) );
+			// SetMotor( drive.southwest, driveSpeed( driveY - driveX + driveR ) );
+		}
 
 		// Don't hog cpu
 		vexSleep(25);
@@ -160,4 +235,16 @@ driveMove(int16_t x, int16_t y, bool_t immediate)
 	SetMotor( drive.southeast, driveSpeed( y - x ), immediate );
 	SetMotor( drive.southwest, driveSpeed( y + x ), immediate );
 	return;
+}
+
+void
+driveLock(void)
+{
+	drive.locked = TRUE;
+}
+
+void
+driveUnlock(void)
+{
+	drive.locked = FALSE;
 }

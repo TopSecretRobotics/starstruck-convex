@@ -70,20 +70,6 @@ static vexDigiCfg dConfig[kVexDigital_Num] = {
 	{ kVexDigital_12,	kVexSensorDigitalInput,		kVexConfigInput,		0 }
 };
 
-// // Motor configuration
-// static vexMotorCfg mConfig[kVexMotorNum] = {
-// 	{ kVexMotor_1,		kVexMotor393S,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_2 },
-// 	{ kVexMotor_2,		kVexMotorUndefined,		kVexMotorNormal,		kVexSensorNone,			0 },
-// 	{ kVexMotor_3,		kVexMotor393S,			kVexMotorNormal,		kVexSensorNone,			0 },
-// 	{ kVexMotor_4,		kVexMotor393T,			kVexMotorReversed,		kVexSensorNone,			0 },
-// 	{ kVexMotor_5,		kVexMotor393T,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_5 },
-// 	{ kVexMotor_6,		kVexMotor393T,			kVexMotorNormal,		kVexSensorNone,			0 },
-// 	{ kVexMotor_7,		kVexMotor393T,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_4 },
-// 	{ kVexMotor_8,		kVexMotor393T,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_3 },
-// 	{ kVexMotor_9,		kVexMotor393S,			kVexMotorReversed,		kVexSensorNone,			0 },
-// 	{ kVexMotor_10,		kVexMotor393S,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_1 }
-// };
-
 // Motor configuration
 static vexMotorCfg mConfig[kVexMotorNum] = {
 	{ kVexMotor_1,		kVexMotor393S,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_1 },
@@ -121,11 +107,11 @@ vexUserSetup()
 		kVexMotor_6,			// arm middle motor pair
 		kVexMotor_8,			// arm bottom motor pair
 		kVexAnalog_1,			// arm potentiometer
-		FALSE,					// normal potentiometer (values increase with positive motor speed)
+		TRUE,					// reversed potentiometer (values decrease with positive motor speed)
 		(1.0 / 5.0),			// gear ratio (1:7 or ~1200 ticks per rotation)
-		120,					// down potentiometer value
-		260,					// bump potentiometer value
-		2125					// up potentiometer value
+		3780,					// down potentiometer value
+		2880,					// bump potentiometer value
+		770						// up potentiometer value
 	);
 	// Claw Gearing: https://goo.gl/g99rX1
 	clawSetup(
@@ -134,8 +120,8 @@ vexUserSetup()
 		kVexAnalog_2,			// claw potentiometer
 		TRUE,					// reversed potentiometer (values decrease with positive motor speed)
 		(1.0 / 5.0),			// gear ratio (1:7 or ~1200 ticks per rotation)
-		1100,					// grab potentiometer value
-		2650					// open potentiometer value
+		1725,					// grab potentiometer value
+		2880					// open potentiometer value
 	);
 	lcdSetup(VEX_LCD_DISPLAY_1);
 }
@@ -154,6 +140,7 @@ vexUserInit()
 	SmartMotorsInit();
 	SmartMotorCurrentMonitorEnable();
 	// SmartMotorPtcMonitorEnable();
+	SmartMotorSetPowerExpanderStatusPort(kVexAnalog_3);
 	SmartMotorsAddPowerExtender(kVexMotor_2, kVexMotor_7, kVexMotor_8, kVexMotor_9);
 	armInit();
 	clawInit();
@@ -204,6 +191,20 @@ vexAutonomous( void *arg )
 	// Must call this
 	vexTaskRegister("auton");
 
+	armStart();
+	clawStart();
+	driveStart();
+
+	// Lock arm in down position
+	armLockDown();
+
+	// Lock claw to grab position
+	clawLockGrab();
+
+	// Give the system half a second to restart the LCD
+	vexSleep( 500 );
+	lcdStart();
+
 	while (1) {
 		switch (lcdGetMode()) {
 			case kLcdMode0:
@@ -228,8 +229,12 @@ vexAutonomous( void *arg )
 				vexSleep(25); // wait 25ms before retry
 				break;
 		}
-	break;
+		break;
 	}
+
+	armLockCurrent();
+	clawLockCurrent();
+	driveLock();
 
 	return (msg_t)0;
 }
@@ -237,6 +242,9 @@ vexAutonomous( void *arg )
 static void
 autonomousMode0(void)
 {
+	armUnlock();
+	clawUnlock();
+	driveUnlock();
 	// // turn left
 	// driveMove( -127,    0, TRUE );
 	// // turn right
@@ -255,8 +263,6 @@ autonomousMode0(void)
 	// armMove(127, TRUE);
 	// // lower arm
 	// armMove(-127, TRUE);
-
-
 
 	// Left Tile
 
@@ -315,6 +321,10 @@ autonomousMode0(void)
 static void
 autonomousMode1(void)
 {
+	armUnlock();
+	clawUnlock();
+	driveUnlock();
+
 	armMove(  127, TRUE);
 	clawMove(-127, TRUE);
 
@@ -383,6 +393,10 @@ autonomousMode1(void)
 static void
 autonomousMode2(void)
 {
+	armUnlock();
+	clawUnlock();
+	driveUnlock();
+
 		// (3) Left tile
 		// open claw and raise arm
 	clawMove(  -127,  TRUE);
@@ -470,6 +484,9 @@ autonomousMode2(void)
 static void
 autonomousMode3(void)
 {
+	armUnlock();
+	clawUnlock();
+	driveUnlock();
 
 	// open claw and raise arm
 	clawMove(  -127,  TRUE);
@@ -557,6 +574,10 @@ autonomousMode3(void)
 static void
 autonomousMode4(void)
 {
+	armUnlock();
+	clawUnlock();
+	driveUnlock();
+
 	// lift arm & open claw
 	armMove(  127, TRUE);
 	clawMove(-127, TRUE);
@@ -593,6 +614,10 @@ autonomousMode4(void)
 static void
 autonomousMode5(void)
 {
+	armUnlock();
+	clawUnlock();
+	driveUnlock();
+
 	// lift arm & open claw
 	armMove(  127, TRUE);
 	clawMove(-127, TRUE);
@@ -671,6 +696,14 @@ vexOperator( void *arg )
 	armStart();
 	clawStart();
 	driveStart();
+
+	armLockCurrent();
+	clawLockCurrent();
+	driveLock();
+
+	// Give the system half a second to restart the LCD
+	vexSleep( 500 );
+	lcdStart();
 
 	// char buf[100] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	// size_t buflen = strnlen(buf, 100);

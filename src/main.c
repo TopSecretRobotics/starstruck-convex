@@ -82,7 +82,10 @@ cmd_sm(vexStream *chp, int argc, char *argv[])
 	(void)chp;
 	(void)argc;
 
-	SmartMotorDebugStatus();
+	while( sdGetWouldBlock((SerialDriver *)chp) ) {
+		SmartMotorDebugStatus();
+		vexSleep( 1000 );
+	}
 }
 
 static void

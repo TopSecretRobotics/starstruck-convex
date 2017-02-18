@@ -25,6 +25,7 @@ typedef struct claw_s {
 	float			gearRatio;
 	int16_t			grabValue;
 	int16_t			openValue;
+	bool_t			locked;
 	pidController	*leftLock;
 	pidController	*rightLock;
 	bool_t			isGrabbing;
@@ -36,6 +37,11 @@ extern void		clawSetup(tVexMotor leftMotor, tVexMotor rightMotor, tVexAnalogPin 
 extern void		clawInit(void);
 extern void		clawStart(void);
 extern void		clawMove(int16_t cmd, bool_t immediate);
+extern void		clawLock(void);
+extern void		clawUnlock(void);
+extern void		clawLockGrab(void);
+extern void		clawLockOpen(void);
+extern void		clawLockCurrent(void);
 #ifdef __cplusplus
 }
 #endif

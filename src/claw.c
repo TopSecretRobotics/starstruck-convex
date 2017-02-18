@@ -94,6 +94,7 @@ clawSetup(tVexMotor leftMotor, tVexMotor rightMotor, tVexAnalogPin potentiometer
 	claw.gearRatio = gearRatio;
 	claw.grabValue = grabValue;
 	claw.openValue = openValue;
+	claw.locked = TRUE;
 	claw.leftLock = NULL;
 	claw.rightLock = NULL;
 	claw.isGrabbing = FALSE;
@@ -145,43 +146,45 @@ clawThread(void *arg)
 	vexTaskRegister("claw");
 
 	while (!chThdShouldTerminate()) {
-		clawCmd = clawSpeed( vexControllerGet( Ch2 ) );
-		//clawCmd = 0;
-		leftClawCmd = rightClawCmd = clawCmd;
-		if (clawCmd == 0) {
-			// claw open and grab
-			if (vexControllerGet( Btn6U ) || vexControllerGet( Btn6UXmtr2 )) {
-				claw.isGrabbing = TRUE;
-				claw.leftLock->enabled = 1;
-				claw.leftLock->target_value = claw.grabValue;
-				claw.rightLock->enabled = 1;
-				claw.rightLock->target_value = claw.grabValue;
-			} else if (vexControllerGet( Btn6D ) || vexControllerGet( Btn6DXmtr2 )) {
+		if (claw.locked) {
+			clawCmd = clawSpeed( vexControllerGet( Ch2 ) );
+			//clawCmd = 0;
+			leftClawCmd = rightClawCmd = clawCmd;
+			if (clawCmd == 0) {
+				// claw open and grab
+				if (vexControllerGet( Btn6U ) || vexControllerGet( Btn6UXmtr2 )) {
+					claw.isGrabbing = TRUE;
+					claw.leftLock->enabled = 1;
+					claw.leftLock->target_value = claw.grabValue;
+					claw.rightLock->enabled = 1;
+					claw.rightLock->target_value = claw.grabValue;
+				} else if (vexControllerGet( Btn6D ) || vexControllerGet( Btn6DXmtr2 )) {
+					claw.isGrabbing = FALSE;
+					claw.leftLock->enabled = 1;
+					claw.leftLock->target_value = claw.openValue;
+					claw.rightLock->enabled = 1;
+					claw.rightLock->target_value = claw.openValue;
+				}
+				clawPIDUpdate(&leftClawCmd, &rightClawCmd);
+			} else {
 				claw.isGrabbing = FALSE;
-				claw.leftLock->enabled = 1;
-				claw.leftLock->target_value = claw.openValue;
-				claw.rightLock->enabled = 1;
-				claw.rightLock->target_value = claw.openValue;
+				claw.leftLock->enabled = 0;
+				claw.rightLock->enabled = 0;
+				claw.leftLock->target_value = claw.rightLock->target_value = vexAdcGet( claw.potentiometer );
+				PidControllerUpdate( claw.leftLock ); // zero out left PID
+				PidControllerUpdate( claw.rightLock ); // zero out right PID
+				// If claw is already grab or open, don't allow the motors to break the claw.
+				if ((leftClawCmd < 0 || rightClawCmd < 0) &&
+						((claw.leftLock->target_value >= (claw.openValue - 250)) || (claw.rightLock->target_value >= (claw.openValue - 250)))) {
+					leftClawCmd = rightClawCmd = 0;
+				} else if ((leftClawCmd > 0 || rightClawCmd > 0) &&
+						((claw.leftLock->target_value <= (claw.grabValue + 250)) || (claw.rightLock->target_value <= (claw.grabValue + 250)))) {
+					leftClawCmd = rightClawCmd = 0;
+				}
 			}
-			clawPIDUpdate(&leftClawCmd, &rightClawCmd);
-		} else {
-			claw.isGrabbing = FALSE;
-			claw.leftLock->enabled = 0;
-			claw.rightLock->enabled = 0;
-			claw.leftLock->target_value = claw.rightLock->target_value = vexAdcGet( claw.potentiometer );
-			PidControllerUpdate( claw.leftLock ); // zero out left PID
-			PidControllerUpdate( claw.rightLock ); // zero out right PID
-			// If claw is already grab or open, don't allow the motors to break the claw.
-			if ((leftClawCmd < 0 || rightClawCmd < 0) &&
-					((claw.leftLock->target_value >= (claw.openValue - 500)) || (claw.rightLock->target_value >= (claw.openValue - 500)))) {
-				leftClawCmd = rightClawCmd = 0;
-			} else if ((leftClawCmd > 0 || rightClawCmd > 0) &&
-					((claw.leftLock->target_value <= (claw.grabValue + 500)) || (claw.rightLock->target_value <= (claw.grabValue + 500)))) {
-				leftClawCmd = rightClawCmd = 0;
-			}
+			SetMotor( claw.leftMotor, leftClawCmd );
+			SetMotor( claw.rightMotor, rightClawCmd );
 		}
-		SetMotor( claw.leftMotor, leftClawCmd );
-		SetMotor( claw.rightMotor, rightClawCmd );
 
 		// Don't hog cpu
 		vexSleep(25);
@@ -257,4 +260,49 @@ clawMove(int16_t cmd, bool_t immediate)
 {
 	SetMotor( claw.leftMotor,  cmd, immediate );
 	SetMotor( claw.rightMotor, cmd, immediate );
+}
+
+void
+clawLock(void)
+{
+	claw.locked = TRUE;
+}
+
+void
+clawUnlock(void)
+{
+	claw.locked = FALSE;
+}
+
+void
+clawLockGrab(void)
+{
+	clawLock();
+	claw.isGrabbing = TRUE;
+	claw.leftLock->enabled = 1;
+	claw.leftLock->target_value = claw.grabValue;
+	claw.rightLock->enabled = 1;
+	claw.rightLock->target_value = claw.grabValue;
+}
+
+void
+clawLockOpen(void)
+{
+	clawLock();
+	claw.isGrabbing = FALSE;
+	claw.leftLock->enabled = 1;
+	claw.leftLock->target_value = claw.openValue;
+	claw.rightLock->enabled = 1;
+	claw.rightLock->target_value = claw.openValue;
+}
+
+void
+clawLockCurrent(void)
+{
+	clawLock();
+	claw.isGrabbing = FALSE;
+	claw.leftLock->enabled = 1;
+	claw.leftLock->target_value = vexAdcGet( claw.potentiometer );
+	claw.rightLock->enabled = 1;
+	claw.rightLock->target_value = vexAdcGet( claw.potentiometer );
 }
