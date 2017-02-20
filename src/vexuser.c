@@ -325,67 +325,108 @@ autonomousMode1(void)
 	clawUnlock();
 	driveUnlock();
 
-	armMove(  127, TRUE);
+	// open claw & move arm down
 	clawMove(-127, TRUE);
+	armMove( -127, TRUE);
+	driveMove(0, 0, TRUE);
 
-	vexSleep( 500 );
-	// drive forward & stop: claw, arm
-	armMove(-127,    TRUE);
+	vexSleep(400);
+	// raise arm
+	armMove(127, TRUE);
+
+	vexSleep(200);
+	// lower arm & stop claw
+	armMove(-127, TRUE);
+	clawMove(  0, TRUE);
+
+	vexSleep(500);
+	// hold arm down & drive forward
+	armMove(-10, TRUE);
 	driveMove(0, 127, TRUE);
 
-	vexSleep( 5000 );
+	vexSleep(1000);
 
-	// driveMove(0, 0, TRUE);
-	// // (2) Right tile
-	// 	// open claw and raise arm
-	// clawMove(  -127,  TRUE);
-	// armMove(    127,  TRUE);
+	driveMove(0, 127, TRUE);
 
-	// vexSleep( 200 );
-	// // lower arm
-	// armMove( -127, TRUE);
+	vexSleep(1000);
+	// hold arm & stop drive & close claw
+	driveMove( 0, 0, TRUE);
+	clawMove(127, TRUE);
 
-	// vexSleep( 200 );
-	// // stop arm
-	// armMove( 0, TRUE);
+	vexSleep(500);
+	// hold claw & bump arm
+	clawMove(20, TRUE);
+	armMove(50, TRUE);
 
-	// vexSleep( 100 );
-	// // stop claw
-	// clawMove( 0, TRUE);
+	vexSleep(500);
+	// stop arm & drive forward
+	armMove(  0, TRUE);
+	driveMove(0, 127, TRUE);
 
-	// // drive forward
-	// driveMove(  0,  127, TRUE );
+	vexSleep(1000);
+	// turn
+	driveMove(127, 0, TRUE);
 
-	// vexSleep( 2000 );
+	vexSleep(700);
+	// turn
+	driveMove(127, 0, TRUE);
 
-	// // turn left
-	// driveMove(  -127,    0, TRUE );
+	vexSleep(700);
+	// turn
+	driveMove(127, 0, TRUE);
 
-	// vexSleep( 1000 );
-	// //close claw and move forward
-	// clawMove(127, TRUE);
-	// driveMove(    0,  127, TRUE );
+	vexSleep(700);
+	// backup to fence
+	driveMove(0, -127, TRUE);
 
-	// vexSleep( 1000 );
-	// // go in 180 degrees
-	// driveMove(  127,    0, TRUE );
+	vexSleep(1200);
+	// stop drive & raise arm & open claw
+	driveMove(0, 0, TRUE);
+	armMove(60, TRUE);
+	clawMove(-20, TRUE);
 
-	// vexSleep( 500 );
-	// // back up against fence
-	// driveMove(    0, -127, TRUE );
+	vexSleep(750);
+	// raise arm
+	armMove(127, TRUE);
 
-	// vexSleep( 2000 );
-	// // stop moving and raise arm
-	// driveMove( 0,    0, TRUE );
+	vexSleep(1000);
 
-	// armMove(127, TRUE);
+	armMove(127, TRUE);
+	// stop claw & lower arm
+	clawMove(0, TRUE);
+	armMove(-127, TRUE);
 
-	// vexSleep( 1000 );
-	// // put arm down
-	// armMove(-127, TRUE);
+	vexSleep(1000);
+	// lower Arm
+	armMove(-127, TRUE);
 
-	// vexSleep( 8000 );
+	vexSleep(1000);
 
+	armMove(-127, TRUE);
+
+	vexSleep(1000);
+
+	armMove(-127, TRUE);
+
+	vexSleep(500);
+
+	// hold arm down & drive forward
+	armMove(-10, TRUE);
+	driveMove(0, 127, TRUE);
+
+	vexSleep(1000);
+	// drive Forward
+	driveMove(0, 127, TRUE);
+
+	vexSleep(1000);
+	// drive forward
+	driveMove(0, 127, TRUE);
+
+	vexSleep(1000);
+
+	driveMove(0, 0, TRUE);
+
+	vexSleep(11100);
 
 	return;
 }

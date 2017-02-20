@@ -191,7 +191,7 @@ lcdWrite(void)
 			break;
 		case kLcdMode1:
 			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
-			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "Top Secret   4sR" );
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "Top Secret   JC1" );
 			break;
 		case kLcdMode2:
 			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
