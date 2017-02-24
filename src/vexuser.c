@@ -264,7 +264,7 @@ autonomousMode0(void)
 	// // lower arm
 	// armMove(-127, TRUE);
 
-		// open claw & move arm down
+	// open claw & move arm down
 	clawMove(-127, TRUE);
 	armMove( -127, TRUE);
 	driveMove(0, 0, TRUE);
@@ -326,7 +326,8 @@ autonomousMode0(void)
 	armMove(127, TRUE);
 
 	vexSleep(1000);
-
+	// take this out when done editing top half
+	armMove(0, TRUE);
 	// armMove(127, TRUE);
 	// // stop claw & lower arm
 	// clawMove(0, TRUE);
