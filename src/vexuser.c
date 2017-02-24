@@ -284,11 +284,11 @@ autonomousMode0(void)
 	armMove(-10, TRUE);
 	driveMove(0, 127, TRUE);
 
-	vexSleep(1000);
+	vexSleep(700);
 
 	driveMove(0, 127, TRUE);
 
-	vexSleep(1000);
+	vexSleep(800);
 	// hold arm & stop drive & close claw
 	driveMove( 0, 0, TRUE);
 	clawMove(127, TRUE);
@@ -307,76 +307,66 @@ autonomousMode0(void)
 	// turn
 	driveMove(127, 0, TRUE);
 
-	vexSleep(700);
+	vexSleep(600);
 	// turn
 	driveMove(127, 0, TRUE);
 
-	vexSleep(700);
-	// turn
-	driveMove(127, 0, TRUE);
-
-	vexSleep(300);
+	vexSleep(500);
 	// backup to fence
 	driveMove(0, -127, TRUE);
 
-	vexSleep(1200);
+	vexSleep(800);
 	// stop drive & raise arm & open claw
 	driveMove(0, 0, TRUE);
 	armMove(60, TRUE);
 	clawMove(-20, TRUE);
 
-	vexSleep(750);
+	vexSleep(800);
 	// raise arm
 	armMove(127, TRUE);
 
 	vexSleep(1000);
 
-	armMove(127, TRUE);
-	// stop claw & lower arm
-	clawMove(0, TRUE);
-	armMove(-127, TRUE);
+	// armMove(127, TRUE);
+	// // stop claw & lower arm
+	// clawMove(0, TRUE);
+	// armMove(-127, TRUE);
 
-	vexSleep(500);
-	armMove(-127, TRUE);
+	// vexSleep(500);
+	// armMove(-127, TRUE);
 
-	vexSleep(500);
+	// vexSleep(500);
 
-	armMove(-127, TRUE);
+	// armMove(-127, TRUE);
 
-	vexSleep(500);
+	// vexSleep(500);
 
-	armMove(-127, TRUE);
+	// armMove(-127, TRUE);
 
-	vexSleep(500);
+	// vexSleep(500);
 
-	armMove(-127, TRUE);
+	// armMove(-127, TRUE);
 
-	vexSleep(500);
+	// vexSleep(500);
 
-	armMove(-127, TRUE);
+	// armMove(-127, TRUE);
 
-	vexSleep(500);
+	// vexSleep(500);
+	// // hold arm down & drive forward
+	// armMove(-10, TRUE);
+	// driveMove(0, 127, TRUE);
 
+	// vexSleep(1000);
+	// // drive Forward
+	// driveMove(0, 127, TRUE);
 
-	// hold arm down & drive forward
-	armMove(-10, TRUE);
-	driveMove(0, 127, TRUE);
+	// vexSleep(800);
+	// // drive forward
+	// driveMove(0, 127, TRUE);
 
-	vexSleep(1000);
-	// drive Forward
-	driveMove(0, 127, TRUE);
+	// vexSleep(1000);
 
-	vexSleep(1000);
-	// drive forward
-	driveMove(0, 127, TRUE);
-
-	vexSleep(1000);
-
-	driveMove( 0, 0, TRUE);
-
-	vexSleep(1300);
-
-	vexSleep(0);
+	// driveMove( 0, 0, TRUE);
 
 
 	return;

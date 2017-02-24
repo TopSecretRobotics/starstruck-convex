@@ -25,6 +25,12 @@ when pushing files into GitHub run the following steps in GitBash:
 3. `git push origin master`
 
 To see if anything is new before going to GitHub run:
+```
+Docker Problem and solution
+```
+1. If docker isn't responding run 'exit' and retry.
+2. If it doesn't let you run 'make windocker' run 'exit' and retry
+3. If this doesn't work run 'docker-machine stop'
 
 ```
 git log
@@ -68,3 +74,20 @@ At the veary end DO OT click the X button at the top right hand side of the page
 This will remove the from the screen.
 
 You are now done Pro ramming for the time being
+```
+Helpful #'s
+```
+Mark Garner (cyberbrains) (970) 310-9507
+
+Brother Bennet "(678) 683-9280"
+
+Gary Olaveson "(208) 201-0210"
+```
+Master/MERGING
+```
+If stuck in mater/MERGING do this:
+  1 git merge --abort
+  2 git fetch --all
+  3 git reset --hard origin/master
+
+To avoid
