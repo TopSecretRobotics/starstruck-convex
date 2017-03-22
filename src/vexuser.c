@@ -278,14 +278,17 @@ autonomousMode0(void)
 	driveMove(0,0, TRUE);
 
 	vexSleep(500);
-	// hold arm down, drive forward & open claw
+	// hold arm down & drive forward & open claw
+	clawMove(-100, TRUE);
 	armMove(-10, TRUE);
 	driveMove(0, 127, TRUE);
-	clawMove(-50, TRUE);
+
+	vexSleep(700);
+
+	driveMove(0, 127, TRUE);
+	clawMove(0, TRUE);
 
 	vexSleep(800);
-	//stop claw
-	clawMove(0, TRUE);
 	// hold arm & stop drive & close claw
 	driveMove( 0, 0, TRUE);
 	clawMove(127, TRUE);
@@ -300,7 +303,11 @@ autonomousMode0(void)
 	armMove(  0, TRUE);
 	driveMove(0, 127, TRUE);
 
-	vexSleep(500);
+	vexSleep(700);
+	// turn
+	driveMove(127, 0, TRUE);
+
+	vexSleep(600);
 	// turn
 	driveMove(127, 0, TRUE);
 
@@ -308,7 +315,7 @@ autonomousMode0(void)
 	// backup to fence
 	driveMove(0, -127, TRUE);
 
-	vexSleep(600);
+	vexSleep(800);
 	// stop drive & raise arm & open claw
 	driveMove(0, 0, TRUE);
 	armMove(60, TRUE);
@@ -374,7 +381,7 @@ autonomousMode1(void)
 	clawUnlock();
 	driveUnlock();
 
-		// open claw & move arm down
+	// open claw & move arm down
 	clawMove(-127, TRUE);
 	armMove( -127, TRUE);
 	driveMove(0, 0, TRUE);
