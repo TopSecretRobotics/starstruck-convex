@@ -8,6 +8,38 @@
 #include <math.h>
 #include <stdlib.h>
 
+typedef struct autotimer_s autotimer_t;
+
+struct autotimer_s {
+	unsigned long actual;
+	unsigned long target;
+};
+
+static autotimer_t autotimer = {
+	.actual = 0,
+	.target = 0
+};
+
+static void
+timerStart(unsigned long target)
+{
+	autotimer.actual = chTimeNow();
+	autotimer.target = autotimer.actual + target;
+}
+
+static bool
+timerReady(void)
+{
+	return (autotimer.target <= autotimer.actual);
+}
+
+static void
+timerUpdate(void)
+{
+	vexSleep(25);
+	autotimer.actual = chTimeNow();
+}
+
 void
 autonomousMode0(void)
 {
@@ -461,6 +493,7 @@ autonomousMode8(void)
 void
 autonomousMode9(void)
 {
+
 	armUnlock();
 	clawUnlock();
 	driveUnlock();
@@ -468,26 +501,35 @@ autonomousMode9(void)
 	// move arm down
 	armMove( -127, TRUE);
 
-	vexSleep(400);
-	// raise arm
-	armMove(127, TRUE);
-
-	vexSleep(200);
-	// lower arm
-	armMove(-127, TRUE);
+	vexSleep(500);
 
 	// raise arm
 	armMove(127, TRUE);
 
-	vexSleep(1300);
+	vexSleep(1500);
 
-	armMove(127, TRUE);
-
-	vexSleep(5000);
-
-	armMove(-127, TRUE);
+	armMove(0, TRUE);
 
 	vexSleep(5000);
+
+	timerStart(2000);
+	while (!timerReady()) {
+		armMove(-127, TRUE);
+		timerUpdate();
+	}
+
+	// t.lasttime = chTimeNow();
+	// t.target = t.lasttime + 5000;
+	// while (t.lasttime < t.target) {
+	// 	armMove(-127, TRUE);
+	// 	// Don't hog cpu
+	// 	vexSleep( 25 );
+	// 	t.lasttime = chTimeNow();
+	// }
+
+	// armMove(-127, TRUE);
+
+	// vexSleep(5000);
 
 	armMove(0, TRUE);
 
