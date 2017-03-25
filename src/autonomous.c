@@ -8,6 +8,7 @@
 #include <math.h>
 #include <stdlib.h>
 
+/* Timer Helpers */
 typedef struct autotimer_s autotimer_t;
 
 struct autotimer_s {
@@ -28,9 +29,9 @@ timerStart(unsigned long target)
 }
 
 static bool
-timerReady(void)
+timerActive(void)
 {
-	return (autotimer.target <= autotimer.actual);
+	return (autotimer.actual < autotimer.target);
 }
 
 static void
@@ -40,12 +41,79 @@ timerUpdate(void)
 	autotimer.actual = chTimeNow();
 }
 
+#define timerRun(TARGET, CODE)	\
+	do {	\
+		timerStart(TARGET);	\
+		while (timerActive()) {	\
+			CODE	\
+			timerUpdate();	\
+		}	\
+	} while (0)
+
+/* Reusable Routines */
+static void
+stopMovement(unsigned long target)
+{
+	timerRun(target, {
+		armMove(0, TRUE);
+		clawMove(0, TRUE);
+		driveMove(0, 0, TRUE);
+	});
+}
+
+static void
+stopDriveMovement(unsigned long target)
+{
+	timerRun(target, {
+		driveMove(0, 0, TRUE);
+	});
+}
+
+static void
+raiseArm(int speed)
+{
+	armMove(speed, TRUE);
+}
+
+static void
+lowerArm(int speed)
+{
+	armMove(-speed, TRUE);
+}
+
+static void
+driveForward(int speed)
+{
+	driveMove(0, speed, TRUE);
+}
+
+static void
+driveBackward(int speed)
+{
+	driveMove(0, -speed, TRUE);
+}
+
+static void
+grabClaw(int speed)
+{
+	clawMove(speed, TRUE);
+}
+
+static void
+openClaw(int speed)
+{
+	clawMove(-speed, TRUE);
+}
+
 void
 autonomousMode0(void)
 {
 	armUnlock();
 	clawUnlock();
 	driveUnlock();
+
+
+
 	// // turn left
 	// driveMove( -127,    0, TRUE );
 	// // turn right
@@ -498,40 +566,32 @@ autonomousMode9(void)
 	clawUnlock();
 	driveUnlock();
 
-	// move arm down
-	armMove( -127, TRUE);
+	// drive forward and grab cube
+	{
+		timerRun(1000, {
+			lowerArm(127);
+			openClaw(127);
+		});
 
-	vexSleep(500);
+		armLockDown();
+		clawLockOpen();
 
-	// raise arm
-	armMove(127, TRUE);
+		timerRun(1000, {
+			lowerArm(10);
+			driveForward(127);
+		});
 
-	vexSleep(1500);
+		clawLockGrab();
 
-	armMove(0, TRUE);
+		stopDriveMovement(100);
+	}
+
+	// lift halfway, drive forward, and turn right
+
 
 	vexSleep(5000);
 
-	timerStart(2000);
-	while (!timerReady()) {
-		armMove(-127, TRUE);
-		timerUpdate();
-	}
-
-	// t.lasttime = chTimeNow();
-	// t.target = t.lasttime + 5000;
-	// while (t.lasttime < t.target) {
-	// 	armMove(-127, TRUE);
-	// 	// Don't hog cpu
-	// 	vexSleep( 25 );
-	// 	t.lasttime = chTimeNow();
-	// }
-
-	// armMove(-127, TRUE);
-
-	// vexSleep(5000);
-
-	armMove(0, TRUE);
+	stopMovement(100);
 
 	return;
 }

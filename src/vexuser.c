@@ -189,11 +189,11 @@ vexAutonomous( void *arg )
 	clawStart();
 	driveStart();
 
-	// Lock arm in down position
-	armLockDown();
+	// // Lock arm in down position
+	// armLockDown();
 
-	// Lock claw to grab position
-	clawLockGrab();
+	// // Lock claw to grab position
+	// clawLockGrab();
 
 	// Give the system half a second to restart the LCD
 	vexSleep( 500 );
