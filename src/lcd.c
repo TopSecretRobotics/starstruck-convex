@@ -161,6 +161,18 @@ lcdRead(void)
 			case kLcdMode5:
 				vexLcdSet( lcd.display, VEX_LCD_LINE_1, "M5"			   );
 				break;
+			case kLcdMode6:
+				vexLcdSet( lcd.display, VEX_LCD_LINE_1, "M6"			   );
+				break;
+			case kLcdMode7:
+				vexLcdSet( lcd.display, VEX_LCD_LINE_1, "M7"			   );
+				break;
+			case kLcdMode8:
+				vexLcdSet( lcd.display, VEX_LCD_LINE_1, "M8"			   );
+				break;
+			case kLcdMode9:
+				vexLcdSet( lcd.display, VEX_LCD_LINE_1, "M9"			   );
+				break;
 			default:
 				vexLcdSet( lcd.display, VEX_LCD_LINE_1, "Error           " );
 				break;
@@ -187,31 +199,47 @@ lcdWrite(void)
 	switch (lcd.mode) {
 		case kLcdMode0:
 			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
-			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "Top Secret   JCL" );
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "0 Top Secret JCL" );
 			break;
 		case kLcdMode1:
 			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
-			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "Top Secret   JCR" );
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "1 Top Secret JCR" );
 			break;
 		case kLcdMode2:
 			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
-			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "Top Secret Chase" );
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "2 Top Secret CHA" );
 			break;
 		case kLcdMode3:
 			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
-			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "Top Secret  M3" );
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "3 Top Secret    " );
 			break;
 		case kLcdMode4:
 			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
-			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "Top Secret  M4" );
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "4 Top Secret    " );
 			break;
 		case kLcdMode5:
 			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
-			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "Top Secret  M5" );
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "5 Top Secret    " );
+			break;
+		case kLcdMode6:
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "6 Top Secret    " );
+			break;
+		case kLcdMode7:
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "7 Top Secret    " );
+			break;
+		case kLcdMode8:
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "8 Top Secret    " );
+			break;
+		case kLcdMode9:
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "9 Top Secret TES" );
 			break;
 		default:
 			vexLcdPrintf( lcd.display, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
-			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "Top Secret   ERR" );
+			vexLcdPrintf( lcd.display, VEX_LCD_LINE_2, "E Top Secret ERR" );
 			break;
 	}
 }
