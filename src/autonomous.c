@@ -461,5 +461,35 @@ autonomousMode8(void)
 void
 autonomousMode9(void)
 {
+	armUnlock();
+	clawUnlock();
+	driveUnlock();
+
+	// move arm down
+	armMove( -127, TRUE);
+
+	vexSleep(400);
+	// raise arm
+	armMove(127, TRUE);
+
+	vexSleep(200);
+	// lower arm
+	armMove(-127, TRUE);
+
+	// raise arm
+	armMove(127, TRUE);
+
+	vexSleep(1300);
+
+	armMove(127, TRUE);
+
+	vexSleep(5000);
+
+	armMove(-127, TRUE);
+
+	vexSleep(5000);
+
+	armMove(0, TRUE);
+
 	return;
 }
