@@ -238,9 +238,7 @@ autonomousMode0(void)
 
 	driveMove( 0, 0, TRUE);
 
-
 	return;
-
 }
 
 void
@@ -577,7 +575,6 @@ autonomousMode9(void)
 		clawLockOpen();
 
 		timerRun(1000, {
-			lowerArm(10);
 			driveForward(127);
 		});
 

@@ -71,18 +71,21 @@ static vexDigiCfg dConfig[kVexDigital_Num] = {
 	{ kVexDigital_12,	kVexSensorDigitalInput,		kVexConfigInput,		0 }
 };
 
+// Port 1 has no power expander
+// port 9 SW
+// port 2 NE
 // Motor configuration
 static vexMotorCfg mConfig[kVexMotorNum] = {
-	{ kVexMotor_1,		kVexMotor393S,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_1 },
+	{ kVexMotor_1,		kVexMotor393S,			kVexMotorNormal,		kVexSensorIME,			0 },
 	{ kVexMotor_2,		kVexMotor393S,			kVexMotorNormal,		kVexSensorNone,			0 },
 	{ kVexMotor_3,		kVexMotorUndefined,		kVexMotorNormal,		kVexSensorNone,			0 },
 	{ kVexMotor_4,		kVexMotor393S,			kVexMotorReversed,		kVexSensorNone,			0 },
-	{ kVexMotor_5,		kVexMotor393T,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_5 },
+	{ kVexMotor_5,		kVexMotor393T,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_3 },
 	{ kVexMotor_6,		kVexMotor393S,			kVexMotorReversed,		kVexSensorNone,			0 },
-	{ kVexMotor_7,		kVexMotor393T,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_4 },
-	{ kVexMotor_8,		kVexMotor393S,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_3 },
+	{ kVexMotor_7,		kVexMotor393T,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_2 },
+	{ kVexMotor_8,		kVexMotor393S,			kVexMotorReversed,		kVexSensorIME,			kImeChannel_1 },
 	{ kVexMotor_9,		kVexMotor393S,			kVexMotorReversed,		kVexSensorNone,			0 },
-	{ kVexMotor_10,		kVexMotor393S,			kVexMotorNormal,		kVexSensorIME,			kImeChannel_2 }
+	{ kVexMotor_10,		kVexMotor393S,			kVexMotorNormal,		kVexSensorIME,			0 }
 };
 
 /*-----------------------------------------------------------------------------*/
