@@ -94,6 +94,18 @@ driveBackward(int speed)
 }
 
 static void
+driveRight(int speed)
+{
+	driveMove(speed, 0, TRUE);
+}
+
+static void
+driveLeft(int speed)
+{
+	driveMove(-speed, 0, TRUE);
+}
+
+static void
 grabClaw(int speed)
 {
 	clawMove(speed, TRUE);
@@ -104,6 +116,7 @@ openClaw(int speed)
 {
 	clawMove(-speed, TRUE);
 }
+
 
 void
 autonomousMode0(void)
@@ -587,6 +600,13 @@ autonomousMode9(void)
 	}
 
 	// lift halfway, drive forward, and turn right
+		timerRun(300, {
+			raiseArm(60);
+		});
+
+		armLockDown();
+
+		stopMovement(50);
 
 
 	vexSleep(5000);
