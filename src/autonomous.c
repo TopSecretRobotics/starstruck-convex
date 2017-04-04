@@ -566,6 +566,19 @@ autonomousMode7(void)
 void
 autonomousMode8(void)
 {
+	armUnlock();
+	clawUnlock();
+	driveUnlock();
+
+	// try to force the arm down
+	timerRun(250, {
+		lowerArm(127);
+		armLockDown();
+	});
+
+	// sleep for 15 seconds
+	vexSleep(15000);
+
 	return;
 }
 
