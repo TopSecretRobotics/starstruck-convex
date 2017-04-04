@@ -577,17 +577,37 @@ autonomousMode9(void)
 	clawUnlock();
 	driveUnlock();
 
+		// unfold
+	{
+		timerRun(200, {
+			lowerArm(127);
+		});
+		stopMovement(50);
+
+		timerRun(200, {
+			raiseArm(127);
+		});
+		stopMovement(50);
+
+		timerRun(600, {
+			lowerArm(127);
+		});
+
+		stopMovement(50);
+		armMove(-10, TRUE);
+	}
+
 	// drive forward and grab cube
 	{
+		armUnlock();
+
 		timerRun(1000, {
 			lowerArm(127);
 			openClaw(127);
 		});
-
-		armLockDown();
 		clawLockOpen();
 
-		timerRun(1000, {
+		timerRun(700, {
 			driveForward(127);
 		});
 
@@ -597,13 +617,51 @@ autonomousMode9(void)
 	}
 
 	// lift halfway, drive forward, and turn right
+	{
+
 		timerRun(300, {
 			raiseArm(60);
 		});
 
-		armLockDown();
-
 		stopMovement(50);
+		raiseArm(10);
+
+		timerRun(200, {
+
+			driveForward(127);
+
+		});
+
+		stopDriveMovement(50);
+
+		timerRun(500, {
+			driveRight(127);
+		});
+
+		stopDriveMovement(50);
+		stopMovement(50);
+	}
+
+	// backup and dump
+
+	timerRun(1000, {
+		driveBackward(127);
+	});
+
+	stopDriveMovement(50);
+
+	timerRun(500, {
+		raiseArm(127);
+		clawLockOpen();
+	});
+
+	stopMovement(50);
+
+	timerRun(600, {
+		lowerArm(127);
+	});
+
+	stopMovement(50);
 
 
 	vexSleep(5000);
