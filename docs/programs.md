@@ -14,7 +14,9 @@ You don't need to follow in exact order, but it is there for convenience in time
 When you are ready to send information to the robot
 
 * In Docker, run `make`
-* In GitBash, run `make flash` (this should send it over to the robot)
+* In GitBash, run `make flash` 
+
+This will send it over to the robot, unless errors put up on Docker. If they pop up follow what they say.
 
 After you finish Programming
 
