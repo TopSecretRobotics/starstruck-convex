@@ -120,6 +120,9 @@ openClaw(int speed)
 
 void
 autonomousMode0(void)
+
+// grab the cube, dump, grab three stars, dump, go into forward & backward loop.
+
 {
 
 	armUnlock();
@@ -134,7 +137,7 @@ autonomousMode0(void)
 	openClaw(0);
 
 
-		// unfold
+	// unfold
 	{
 		timerRun(200, {
 			lowerArm(127);
@@ -155,7 +158,7 @@ autonomousMode0(void)
 		timerRun(250, {
 			lowerArm(127);
 			armLockDown();
-	});
+		});
 
 		stopMovement(50);
 	}
@@ -303,7 +306,7 @@ autonomousMode0(void)
 
 	// Enter loop 3 Times
 
-	// Time One
+	// Time One ~ Drive Forward, Grab & Dump
 	{
 		timerRun(500,{
 			openClaw(127);
@@ -344,7 +347,7 @@ autonomousMode0(void)
 		});
 	}
 
-	// Time Two
+	// Time Two ~ Drive Forward, Grab & Dump
 	{
 		timerRun(1200, {
 			lowerArm(127);
@@ -384,7 +387,10 @@ autonomousMode0(void)
 		timerRun(600, {
 			raiseArm(127);
 		});
+	}
 
+		// Time Three ~ Drive Forward, Grab & Dump
+	{
 		timerRun(1200, {
 			lowerArm(127);
 		});
@@ -423,8 +429,8 @@ autonomousMode0(void)
 		timerRun(600, {
 			raiseArm(127);
 		});
-
 	}
+
 	return;
 }
 void
