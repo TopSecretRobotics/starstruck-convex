@@ -207,54 +207,56 @@ autonomousMode0(void)
 	}
 
 	// backup and dump
+	{
+		timerRun(800, {
+			driveBackward(127);
+		});
 
-	timerRun(800, {
-		driveBackward(127);
-	});
+		stopDriveMovement(50);
 
-	stopDriveMovement(50);
+		timerRun(900, {
+			raiseArm(127);
+			clawLockOpen();
+		});
 
-	timerRun(900, {
-		raiseArm(127);
-		clawLockOpen();
-	});
-
-	stopMovement(50);
+		stopMovement(50);
+	}
 
 	// lower arm & drive foreward & grab
 	{
 
-	timerRun(1000, {
-		lowerArm(127);
-	});
+		timerRun(1000, {
+			lowerArm(127);
+		});
 
-	timerRun(250, {
-		lowerArm(127);
-		armLockDown();
-	});
+		timerRun(250, {
+			lowerArm(127);
+			armLockDown();
+		});
 
-	stopMovement(50);
+		stopMovement(50);
 
-	timerRun(800, {
-		driveForward(127);
-	});
+		timerRun(800, {
+			driveForward(127);
+		});
 
-	stopDriveMovement(50);
-	stopMovement(50);
+		stopDriveMovement(50);
+		stopMovement(50);
 
-	timerRun(400, {
-		openClaw(127);
-	});
+		timerRun(400, {
+			openClaw(127);
+		});
 
-	timerRun(1000, {
-		grabClaw(127);
-		clawLockGrab();
-	});
+		timerRun(1000, {
+			grabClaw(127);
+			clawLockGrab();
+		});
+
+		armUnlock();
 
 	}
 
-	armUnlock();
-	// bump up Backup & dump
+	// Bump Up, Backup & dump
 	{
 
 		timerRun(200, {
@@ -262,155 +264,165 @@ autonomousMode0(void)
 		});
 
 
-	timerRun(1100, {
-		driveBackward(127);
-	});
+		timerRun(1100, {
+			driveBackward(127);
+		});
+
+			timerRun(800, {
+			raiseArm(127);
+		});
+
+		timerRun(100,{
+			clawLockOpen();
+		});
 
 		timerRun(800, {
-		raiseArm(127);
-	});
+			raiseArm(127);
+		});
 
+	}
 
-	timerRun(100,{
-		clawLockOpen();
-	});
+	// Drive Forward, Turn Right, Lower arm
+	{
 
+		timerRun(200, {
+			driveForward(127);
+		});
 
-	timerRun(800, {
-		raiseArm(127);
-	});
+		timerRun(1200, {
+			lowerArm(127);
+		});
 
-	timerRun(200, {
-		driveForward(127);
-	});
+		timerRun(200, {
+			driveRight(127);
+		});
 
-	timerRun(1200, {
-		lowerArm(127);
-	});
+		stopDriveMovement(50);
 
-	timerRun(200, {
-		driveRight(127);
-	});
+	}
 
-	stopDriveMovement(50);
+	// Enter loop 3 Times
 
-	// enter loop 3 times
+	// Time One
+	{
+		timerRun(500,{
+			openClaw(127);
+		});
 
-	timerRun(500,{
-		openClaw(127);
-	});
+		timerRun(1500, {
+			driveForward(127);
+		});
 
-	timerRun(1500, {
-		driveForward(127);
-	});
+		timerRun(1000, {
+			grabClaw(127);
+			clawLockGrab();
+		});
 
-	timerRun(1000, {
-		grabClaw(127);
-		clawLockGrab();
-	});
+		timerRun(200, {
+			raiseArm(127);
+		});
 
-	timerRun(200, {
-		raiseArm(127);
-	});
+		timerRun(1500, {
+			driveBackward(127);
+		});
 
-	timerRun(1500, {
-		driveBackward(127);
-	});
+		timerRun(50, {
+			driveLeft(127);
+		});
 
-	timerRun(50, {
-		driveLeft(127);
-	});
+		timerRun(600, {
+			raiseArm(127);
+		});
 
-	timerRun(600, {
-		raiseArm(127);
-	});
+			timerRun(200, {
+				openClaw(127);
+			});
+		clawUnlock();
+
+		timerRun(600, {
+			raiseArm(127);
+		});
+	}
+
+	// Time Two
+	{
+		timerRun(1200, {
+			lowerArm(127);
+		});
+
+		timerRun(500,{
+			openClaw(127);
+		});
+
+		timerRun(1300, {
+			driveForward(127);
+		});
+
+		timerRun(1500, {
+			grabClaw(127);
+			clawLockGrab();
+		});
+
+		timerRun(200, {
+			raiseArm(127);
+		});
+
+		timerRun(1500, {
+			driveBackward(127);
+		});
+
+		timerRun(600, {
+			raiseArm(127);
+		});
 
 		timerRun(200, {
 			openClaw(127);
 		});
-	clawUnlock();
 
-	timerRun(600, {
-		raiseArm(127);
-	});
+		clawUnlock();
 
-		timerRun(1200, {
-		lowerArm(127);
-	});
-
-
-	timerRun(500,{
-		openClaw(127);
-	});
-
-	timerRun(1300, {
-		driveForward(127);
-	});
-
-	timerRun(1500, {
-		grabClaw(127);
-		clawLockGrab();
-	});
-
-		timerRun(200, {
-		raiseArm(127);
-	});
-
-	timerRun(1500, {
-		driveBackward(127);
-	});
-
-	timerRun(600, {
-		raiseArm(127);
-	});
-
-	timerRun(200, {
-		openClaw(127);
-	});
-
-	clawUnlock();
-
-	timerRun(600, {
-		raiseArm(127);
-	});
+		timerRun(600, {
+			raiseArm(127);
+		});
 
 		timerRun(1200, {
-		lowerArm(127);
-	});
+			lowerArm(127);
+		});
 
-	timerRun(500,{
-		openClaw(127);
-	});
-
-	timerRun(1300, {
-		driveForward(127);
-	});
-
-	timerRun(1600, {
-		grabClaw(127);
-		clawLockGrab();
-	});
-
-	timerRun(200, {
-		raiseArm(127);
-	});
-
-	timerRun(1500, {
-		driveBackward(127);
-	});
-
-	timerRun(600, {
-		raiseArm(127);
-	});
-
-	timerRun(200, {
+		timerRun(500,{
 			openClaw(127);
 		});
-	clawUnlock();
 
-	timerRun(600, {
-		raiseArm(127);
-	});
+		timerRun(1300, {
+			driveForward(127);
+		});
+
+		timerRun(1600, {
+			grabClaw(127);
+			clawLockGrab();
+		});
+
+		timerRun(200, {
+			raiseArm(127);
+		});
+
+		timerRun(1500, {
+			driveBackward(127);
+		});
+
+		timerRun(600, {
+			raiseArm(127);
+		});
+
+		timerRun(200, {
+			openClaw(127);
+		});
+
+		clawUnlock();
+
+		timerRun(600, {
+			raiseArm(127);
+		});
 
 	}
 	return;
