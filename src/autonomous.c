@@ -121,7 +121,7 @@ openClaw(int speed)
 void
 autonomousMode0(void)
 
-// grab the cube, dump, grab three stars, dump, go into forward & backward loop.
+// Grab the Cube, Dump, Grab Three Stars, Dump, Go into Forward & Backward Dump loop.
 
 {
 	armUnlock();
@@ -136,7 +136,7 @@ autonomousMode0(void)
 	openClaw(0);
 
 
-	// unfold
+		// unfold
 	{
 		timerRun(200, {
 			lowerArm(127);
@@ -161,8 +161,7 @@ autonomousMode0(void)
 
 		stopMovement(50);
 	}
-
-	// drive forward and grab cube
+		// drive forward and grab cube
 	{
 		armUnlock();
 
@@ -177,13 +176,12 @@ autonomousMode0(void)
 		});
 
 		timerRun(400, {
-		clawLockGrab();
-	});
+			clawLockGrab();
+		});
 
 		stopDriveMovement(100);
 	}
-
-	// lift halfway, drive forward, and turn right
+		// lift halfway, drive forward, and turn right
 	{
 
 		timerRun(300, {
@@ -195,7 +193,6 @@ autonomousMode0(void)
 
 		timerRun(200, {
 			driveForward(127);
-
 		});
 
 		stopDriveMovement(50);
@@ -207,8 +204,7 @@ autonomousMode0(void)
 		stopDriveMovement(50);
 		stopMovement(50);
 	}
-
-	// backup and dump
+		// backup and dump
 	{
 		timerRun(800, {
 			driveBackward(127);
@@ -223,8 +219,7 @@ autonomousMode0(void)
 
 		stopMovement(50);
 	}
-
-	// lower arm & drive foreward & grab
+		// lower arm & drive foreward & grab
 	{
 
 		timerRun(1000, {
@@ -257,8 +252,7 @@ autonomousMode0(void)
 		armUnlock();
 
 	}
-
-	// Bump Up, Backup & dump
+		// Bump Up, Backup & dump
 	{
 
 		timerRun(200, {
@@ -283,8 +277,7 @@ autonomousMode0(void)
 		});
 
 	}
-
-	// Drive Forward, Turn Right, Lower arm
+		// Drive Forward, Turn Right, Lower arm
 	{
 
 		timerRun(200, {
@@ -302,10 +295,9 @@ autonomousMode0(void)
 		stopDriveMovement(50);
 
 	}
+		// Enter loop 3 Times
 
-	// Enter loop 3 Times
-
-	// Time One ~ Drive Forward, Grab & Dump
+		// Time One ~ Drive Forward, Grab & Dump
 	{
 		timerRun(500,{
 			openClaw(127);
@@ -345,8 +337,7 @@ autonomousMode0(void)
 			raiseArm(127);
 		});
 	}
-
-	// Time Two ~ Drive Forward, Grab & Dump
+		// Time Two ~ Drive Forward, Grab & Dump
 	{
 		timerRun(1200, {
 			lowerArm(127);
@@ -387,7 +378,6 @@ autonomousMode0(void)
 			raiseArm(127);
 		});
 	}
-
 		// Time Three ~ Drive Forward, Grab & Dump
 	{
 		timerRun(1200, {
@@ -506,16 +496,19 @@ autonomousMode7(void)
 		timerRun(200, {
 			lowerArm(127);
 		});
+
 		stopMovement(50);
 
 		timerRun(200, {
 			raiseArm(127);
 		});
+
 		stopMovement(50);
 
 		timerRun(600, {
 			lowerArm(127);
 		});
+
 		timerRun(250, {
 			lowerArm(127);
 			armLockDown();
@@ -523,7 +516,7 @@ autonomousMode7(void)
 
 		stopDriveMovement(50);
 	}
-		// open claw & drive forward & close claw
+		// open claw, drive forward & close claw
 	{
 		timerRun(250, {
 			openClaw(127);
