@@ -303,7 +303,7 @@ autonomousMode0(void)
 			openClaw(127);
 		});
 
-		timerRun(1500, {
+		timerRun(1200, {
 			driveForward(127);
 		});
 
@@ -312,16 +312,16 @@ autonomousMode0(void)
 			clawLockGrab();
 		});
 
+		timerRun(400, {
+			driveLeft(127);
+		});
+
 		timerRun(200, {
 			raiseArm(127);
 		});
 
 		timerRun(1500, {
 			driveBackward(127);
-		});
-
-		timerRun(50, {
-			driveLeft(127);
 		});
 
 		timerRun(600, {
@@ -401,7 +401,7 @@ autonomousMode0(void)
 			raiseArm(127);
 		});
 
-		timerRun(1500, {
+		timerRun(1200, {
 			driveBackward(127);
 		});
 
@@ -432,6 +432,9 @@ autonomousMode1(void)
 	return;
 }
 
+//Third Pick	// 80P Vexmen 3 stars, a cube, far zone, auton push preload  knock of stars on fence
+
+// third Pick   //4863 6-8, a cube, hang 15 sec.
 void
 autonomousMode2(void)
 {
@@ -689,7 +692,7 @@ autonomousMode8(void)
 			openClaw(127);
 		});
 
-		timerRun(1000, {
+		timerRun(1200, {
 			grabClaw(127);
 			clawLockGrab();
 		});
