@@ -527,8 +527,6 @@ autonomousMode7(void)
 
 		stopMovement(50);
 
-		vexSleep(1000);
-
 		timerRun(400, {
 			driveForward(127);
 		});
