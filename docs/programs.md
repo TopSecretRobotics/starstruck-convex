@@ -24,7 +24,7 @@ when pushing files into GitHub run the following steps in GitBash:
 
 1. `git add .`
 2. `git commit -m "Type what you did today"``
-3. `git push origin master`
+3. `git push origin Master`
 
 To see if anything is new before going to GitHub run:
 ```
@@ -38,9 +38,9 @@ Docker Problem and solution
 git log
 ```
 
-This will pull up al hi chase  times you have pushed something up and who pushed it up to 
+This will pull up times you have pushed something up and who pushed it up to 
 
-once you are done lo hi chase king at it hit the `q` button
+once you are done it hit the `q` button
 
 
 ```

@@ -55,8 +55,9 @@ static void
 stopMovement(unsigned long target)
 {
 	timerRun(target, {
-		armMove(0, TRUE);
-		clawMove(0, TRUE);
+		armMove(0, TRUE)
+		liftMove(0, TRUE);
+		setterMove(0, TRUE);
 		driveMove(0, 0, TRUE);
 	});
 }
@@ -67,6 +68,18 @@ stopDriveMovement(unsigned long target)
 	timerRun(target, {
 		driveMove(0, 0, TRUE);
 	});
+}
+
+static void
+raiseLift(int speed)
+{
+	liftMove(speed, TRUE);
+}
+
+static void
+lowerLift(int speed)
+{
+	liftMove(-speed, TRUE);
 }
 
 static void
@@ -106,15 +119,15 @@ driveLeft(int speed)
 }
 
 static void
-grabClaw(int speed)
+grabSetter(int speed)
 {
-	clawMove(speed, TRUE);
+	setterMove(speed, TRUE);
 }
 
 static void
-openClaw(int speed)
+openSetter(int speed)
 {
-	clawMove(-speed, TRUE);
+	setterMove(-speed, TRUE);
 }
 
 
@@ -164,6 +177,7 @@ autonomousMode0(void)
 		timerRun(500, {
 			openClaw(127);
 		});
+
 
 		stopMovement(50);
 

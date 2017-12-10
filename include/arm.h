@@ -25,9 +25,7 @@ typedef enum {
 } armPosition_t;
 
 typedef struct arm_s {
-	tVexMotor		motor0;
-	tVexMotor		motor1;
-	tVexMotor		motor2;
+	tVexMotor		armMotor;
 	tVexAnalogPin	potentiometer;
 	bool_t			reversed;
 	float			gearRatio;
@@ -40,7 +38,7 @@ typedef struct arm_s {
 } arm_t;
 
 extern arm_t	*armGetPtr(void);
-extern void		armSetup(tVexMotor motor0, tVexMotor motor1, tVexMotor motor2,
+extern void		armSetup(tVexMotor armMotor,
 						 tVexAnalogPin potentiometer, bool_t reversed, float gearRatio,
 						 int16_t downValue, int16_t bumpValue, int16_t upValue);
 extern void		armInit(void);

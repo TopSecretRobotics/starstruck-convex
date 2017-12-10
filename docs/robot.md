@@ -17,3 +17,6 @@ On these tables the motor will find what power it is supposed to find and go to 
 ```
 
 In Autonomous `while (1)` is the same as true
+
+btns
+new functions

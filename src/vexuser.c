@@ -50,8 +50,9 @@
 
 #include "smartmotor.h"
 #include "drive.h"
+#include "lift.h"
 #include "arm.h"
-#include "claw.h"
+#include "setter.h"
 #include "lcd.h"
 #include "autonomous.h"
 
@@ -105,25 +106,30 @@ vexUserSetup()
 		kVexMotor_10,			// drive southeast or back-right motor
 		kVexMotor_1				// drive southwest or back-left motor
 	);
-	// Arm Gearing: https://goo.gl/1UD1ne
-	armSetup(
-		kVexMotor_4,			// arm top motor pair
-		kVexMotor_6,			// arm middle motor pair
-		kVexMotor_8,			// arm bottom motor pair
+	// Lift Gearing: https://goo.gl/1UD1ne
+	liftSetup(/*armSetup(*/
+		kVexMotor_4,			// arm top motor pair (Left Lift motor pair)
+		kVexMotor_6,			// arm middle motor pair (Right Back Lift)
+		kVexMotor_8,			// arm bottom motor pair (Right Front Lift)
 		kVexAnalog_1,			// arm potentiometer
 		TRUE,					// reversed potentiometer (values decrease with positive motor speed)
-		(1.0 / 7.0),			// gear ratio (1:7 or ~857 ticks per rotation)
+		(1.0 / 5.0),			// gear ratio (1:5 or ~857 ticks per rotation)
 		3750,					// down potentiometer value
 		2880,					// bump potentiometer value
 		350						// up potentiometer value
 	);
-	// Claw Gearing: https://goo.gl/g99rX1
-	clawSetup(
-		kVexMotor_5,			// left claw motor
-		kVexMotor_7,			// right claw motor
-		kVexAnalog_2,			// claw potentiometer
+	// Arm
+	armSetup(
+		kvexMotor_,             // arm motor
+		(1.0 / 3.0)             //gear ratio
+	);
+	// Setter Gearing: https://goo.gl/g99rX1
+	setterSetup(/*clawSetup(*/
+		kVexMotor_5,			// left claw motor (left motor setter)
+		kVexMotor_7,			// right claw motor (right motor setter)
+		kVexAnalog_2,			// setter potentiometer
 		TRUE,					// reversed potentiometer (values decrease with positive motor speed)
-		(1.0 / 5.0),			// gear ratio (1:7 or ~1200 ticks per rotation)
+		(1.0 / 7.0),			// gear ratio (1:7 or ~1200 ticks per rotation)
 		1725,					// grab potentiometer value
 		2880					// open potentiometer value
 	);
@@ -146,8 +152,8 @@ vexUserInit()
 	// SmartMotorPtcMonitorEnable();
 	SmartMotorSetPowerExpanderStatusPort(kVexAnalog_3);
 	SmartMotorsAddPowerExtender(kVexMotor_2, kVexMotor_7, kVexMotor_8, kVexMotor_9);
-	armInit();
-	clawInit();
+	liftInit();
+	setterInit();
 	driveInit();
 	SmartMotorRun();
 	lcdInit();
@@ -188,15 +194,16 @@ vexAutonomous( void *arg )
 	// Must call this
 	vexTaskRegister("auton");
 
-	armStart();
-	clawStart();
+	liftStart();
+	liftStart();
+	setterStart();
 	driveStart();
 
-	// // Lock arm in down position
-	// armLockDown();
+	// // Lock lift in down position
+	// liftLockDown();
 
-	// // Lock claw to grab position
-	// clawLockGrab();
+	// // Lock setter to grab position
+	// setterLockGrab();
 
 	// Give the system half a second to restart the LCD
 	vexSleep( 500 );
@@ -242,7 +249,8 @@ vexAutonomous( void *arg )
 	}
 
 	armLockCurrent();
-	clawLockCurrent();
+	liftLockCurrent();
+	setterLockCurrent();
 	driveLock();
 
 	return (msg_t)0;
@@ -292,11 +300,13 @@ vexOperator( void *arg )
 	vexTaskRegister("operator");
 
 	armStart();
-	clawStart();
+	liftStart();
+	setterStart();
 	driveStart();
 
 	armLockCurrent();
-	clawLockCurrent();
+	liftLockCurrent();
+	setterLockCurrent();
 	driveLock();
 
 	// Give the system half a second to restart the LCD
@@ -304,7 +314,7 @@ vexOperator( void *arg )
 	lcdStart();
 
 	// char buf[100] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	// size_t buflen = strnlen(buf, 100);
+	// size_t buflen = strnlen(, 100);
 	// char *p = buf;
 
 	// int menuIndex = 0;
@@ -325,7 +335,7 @@ vexOperator( void *arg )
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_1, "%4.2fV   %8.1f", vexSpiGetMainBattery() / 1000.0, chTimeNow() / 1000.0 );
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "Top Secret Robot" );
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "m4 %3d m6 %3d", vexMotorGet( kVexMotor_4 ), vexMotorGet( kVexMotor_6 ) );
-		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "claw pot %4d", vexAdcGet( clawGetPtr()->potentiometer ) );
+		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "setter pot %4d", vexAdcGet( setterGetPtr()->potentiometer ) );
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "wrist pot %4d", vexAdcGet( kVexAnalog_2 ) );
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "%3d %3d %3d", vexMotorGet( kVexMotor_8 ), vexMotorGet( kVexMotor_7 ), vexMotorGet( kVexMotor_3 ));
 		// vexLcdPrintf( VEX_LCD_DISPLAY_1, VEX_LCD_LINE_2, "\xA0\xA1\xA2\xA3\xA4\xA5\xA6\xA7\xA8\xA9\xAA\xAB\xAC\xAD\xAE\xAF\xB0\xB1\xB2\xB" );

@@ -1,10 +1,10 @@
 /*
- * claw.h
+ * setter.h
  */
 
-#ifndef CLAW_H_
+#ifndef SETTER_H_
 
-#define CLAW_H_
+#define SETTER_H_
 
 #include "ch.h"  		// needs for all ChibiOS programs
 #include "hal.h" 		// hardware abstraction layer header
@@ -17,7 +17,7 @@
 extern "C" {
 #endif
 
-typedef struct claw_s {
+typedef struct setter_s {
 	tVexMotor		leftMotor;
 	tVexMotor		rightMotor;
 	tVexAnalogPin	potentiometer;
@@ -29,19 +29,19 @@ typedef struct claw_s {
 	pidController	*leftLock;
 	pidController	*rightLock;
 	bool_t			isGrabbing;
-} claw_t;
+} setter_t;
 
-extern claw_t	*clawGetPtr(void);
-extern void		clawSetup(tVexMotor leftMotor, tVexMotor rightMotor, tVexAnalogPin potentiometer,
+extern setter_t	*setterGetPtr(void);
+extern void		setterSetup(tVexMotor leftMotor, tVexMotor rightMotor, tVexAnalogPin potentiometer,
 						  bool_t sensorReversed, float gearRatio, int16_t grabValue, int16_t openValue);
-extern void		clawInit(void);
-extern void		clawStart(void);
-extern void		clawMove(int16_t cmd, bool_t immediate);
-extern void		clawLock(void);
-extern void		clawUnlock(void);
-extern void		clawLockGrab(void);
-extern void		clawLockOpen(void);
-extern void		clawLockCurrent(void);
+extern void		setterInit(void);
+extern void		setterStart(void);
+extern void		setterMove(int16_t cmd, bool_t immediate);
+extern void		setterLock(void);
+extern void		setterUnlock(void);
+extern void		setterLockGrab(void);
+extern void		setterLockOpen(void);
+extern void		setterLockCurrent(void);
 #ifdef __cplusplus
 }
 #endif

@@ -52,8 +52,9 @@
 #include "apollo.h"
 #include "pidlib.h"
 
-#include "claw.h"
 #include "arm.h"
+#include "setter.h"
+#include "lift.h"
 
 /*-----------------------------------------------------------------------------*/
 /* Command line related.                                                       */
@@ -112,34 +113,34 @@ vex_pid_debug(pidController *p)
 }
 
 static void
-cmd_claw(vexStream *chp, int argc, char *argv[])
+cmd_setter(vexStream *chp, int argc, char *argv[])
 {
 	(void)argv;
 	(void)chp;
 	(void)argc;
 
-	vex_printf("Claw Left Lock PID\r\n");
-	vex_pid_debug(clawGetPtr()->leftLock);
-	vex_printf("Claw Right Lock PID\r\n");
-	vex_pid_debug(clawGetPtr()->rightLock);
+	vex_printf("setter out Lock PID\r\n");
+	vex_pid_debug(setterGetPtr()->outLock);
+	vex_printf("setter in Lock PID\r\n");
+	vex_pid_debug(inGetPtr()->inLock);
 
 	return;
 }
 
 static void
-cmd_arm(vexStream *chp, int argc, char *argv[])
+cmd_lift(vexStream *chp, int argc, char *argv[])
 {
 	(void)argv;
 	(void)chp;
 	(void)argc;
 
-	arm_t *a = armGetPtr();
-	vex_printf("Arm\r\n");
+	lift_t *a = liftGetPtr();
+	vex_printf("Lift\r\n");
 	vex_printf("\tReversed:   %d\r\n", a->reversed);
 	vex_printf("\tGear Ratio: %f\r\n", a->gearRatio);
 	vex_printf("\tDown:       %d\r\n", a->downValue);
 	vex_printf("\tUp:         %d\r\n", a->upValue);
-	vex_printf("Arm Lock PID\r\n");
+	vex_printf("Lift Lock PID\r\n");
 	vex_pid_debug(a->lock);
 
 	return;
@@ -159,8 +160,8 @@ static const ShellCommand commands[] = {
 	{"test",	vexTestDebug},
 	{"sm",		cmd_sm},
 	{"apollo",	cmd_apollo},
-	{"claw",	cmd_claw},
-	{"arm",		cmd_arm},
+	{"setter",	cmd_setter},
+	{"lift",	cmd_lift},
 	{NULL,		NULL}
 };
 
