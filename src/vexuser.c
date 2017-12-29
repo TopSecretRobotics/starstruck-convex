@@ -102,31 +102,35 @@ vexUserSetup()
 	vexMotorConfigure( mConfig, MOT_CONFIG_SIZE( mConfig ) );
 	driveSetup(
 		kVexMotor_2,			// drive northeast or front-right motor
-		kVexMotor_9,			// drive northwest or front-left motor
-		kVexMotor_10,			// drive southeast or back-right motor
+		kVexMotor_9,			// drive northwest or front-left motor  									(Power Expander A)
+		kVexMotor_8,			// drive southeast or back-right motor  									(Power Expander B)
 		kVexMotor_1				// drive southwest or back-left motor
 	);
 	// Lift Gearing: https://goo.gl/1UD1ne
 	liftSetup(/*armSetup(*/
-		kVexMotor_4,			// arm top motor pair (Left Lift motor pair)
-		kVexMotor_6,			// arm middle motor pair (Right Back Lift)
-		kVexMotor_8,			// arm bottom motor pair (Right Front Lift)
-		kVexAnalog_1,			// arm potentiometer
-		TRUE,					// reversed potentiometer (values decrease with positive motor speed)
+		kVexMotor_4,			// arm top motor pair (Lift Top motor pair)
+		kVexMotor_6,			// arm bottom motor pair (Lift Bottom motor pair) 							(Power Expander D)
+		// TRUE,					// reversed potentiometer (values decrease with positive motor speed)
 		(1.0 / 5.0),			// gear ratio (1:5 or ~857 ticks per rotation)
-		3750,					// down potentiometer value
-		2880,					// bump potentiometer value
-		350						// up potentiometer value
+		// 3750,					// down potentiometer value
+		// 2880,					// bump potentiometer value
+		// 350						// up potentiometer value
+	);
+	// Intake
+	intakeSetup(
+		kVexMotor_5 			   // Intake motor
 	);
 	// Arm
 	armSetup(
-		kvexMotor_,             // arm motor
-		(1.0 / 3.0)             //gear ratio
+		kVexMotor_3,            // arm motor
+		kVexAnalog_1,			// arm potentiometer
+		TRUE,					// reversed potentiometer (values decrease with positive motor speed)
+		(1.0 / 3.0)             // gear ratio
+
 	);
 	// Setter Gearing: https://goo.gl/g99rX1
 	setterSetup(/*clawSetup(*/
-		kVexMotor_5,			// left claw motor (left motor setter)
-		kVexMotor_7,			// right claw motor (right motor setter)
+		kVexMotor_7,			// setter Motor																(Power expander C)
 		kVexAnalog_2,			// setter potentiometer
 		TRUE,					// reversed potentiometer (values decrease with positive motor speed)
 		(1.0 / 7.0),			// gear ratio (1:7 or ~1200 ticks per rotation)
