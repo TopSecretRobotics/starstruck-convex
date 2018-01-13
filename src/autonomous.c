@@ -34,7 +34,7 @@ timerActive(void)
 	return (autotimer.actual < autotimer.target);
 }
 
-static void
+static voidti
 timerUpdate(void)
 {
 	vexSleep(25);
@@ -59,6 +59,7 @@ stopMovement(unsigned long target)
 		liftMove(0, TRUE);
 		setterMove(0, TRUE);
 		driveMove(0, 0, TRUE);
+		intake(0, TRUE);
 	});
 }
 
@@ -130,6 +131,17 @@ openSetter(int speed)
 	setterMove(-speed, TRUE);
 }
 
+static void
+grabIntake
+{
+	intakeMove(speed, TRUE);
+}
+
+static void
+releaseIntake
+{
+	intakeMove(-speed, TRUE);
+}
 
 void
 autonomousMode0(void)

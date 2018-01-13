@@ -15,6 +15,8 @@
 #include "drive.h"
 #include "arm.h"
 #include "claw.h"
+#include "intake.h"
+
 
 #ifdef __cplusplus
 extern "C" {
