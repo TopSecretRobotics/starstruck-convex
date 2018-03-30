@@ -359,16 +359,180 @@ autonomousMode0(void)
 void
 autonomousMode1(void)
 {
+
 	armUnlock();
 	clawUnlock();
 	driveUnlock();
 
+	clawUnlock();
+	stopMovement(25);
+	stopDriveMovement(25);
+
+	grabClaw(0);
+	openClaw(0);
+
+	stopMovement(75);
+
+		// unfold
+	{
+		timerRun(200, {
+			lowerArm(127);
+			openClaw(0);
+		});
+
+		stopMovement(50);
+
+		timerRun(200, {
+			raiseArm(127);
+			openClaw(0);
+		});
+
+		stopMovement(50);
+
+		timerRun(600, {
+			lowerArm(127);
+			openClaw(0);
+		});
+
+		timerRun(250, {
+			lowerArm(127);
+			armLockDown();
+		});
+
+		stopMovement(50);
+	}
+		// drive forward and grab cube
+	{
+		armUnlock();
+
+		timerRun(1000, {
+			lowerArm(127);
+			openClaw(127);
+		});
+
+		clawLockOpen();
+
+		timerRun(700, {
+			driveForward(127);
+		});
+
+		timerRun(100, {
+			clawLockGrab();
+		});
+
+		stopDriveMovement(100);
+	}
+		// lift halfway, drive forward, and turn right
+	{
+		timerRun(300, {
+			raiseArm(60);
+		});
+
+		stopMovement(50);
+		raiseArm(10);
+
+		timerRun(300, {
+			driveForward(127);
+		});
+
+		stopDriveMovement(50);
+
+		timerRun(400, {
+			driveRight(127);
+		});
+
+		stopDriveMovement(50);
+		stopMovement(50);
+	}
+		// backup and dump
+	{
+		timerRun(1200, {
+			driveBackward(127);
+		});
+
+		stopDriveMovement(50);
+
+		timerRun(900, {
+			raiseArm(127);
+			clawLockOpen();
+		});
+
+		stopMovement(50);
+	}
+		// lower arm, drive forward, turn to the right, drive forward
+	{
+		timerRun(1000, {
+			lowerArm(127);
+		});
+
+		armLockDown();
+
+		stopMovement(50);
+
+		timerRun(400, {
+			driveForward(127);
+		});
+
+		stopDriveMovement(50);
+
+		timerRun(300, {
+			driveRight(127);
+		});
+
+		stopDriveMovement(50);
+
+		timerRun(2000, {
+			driveForward(127);
+		});
+
+		stopDriveMovement(50);
+
+		timerRun(500, {
+			grabClaw(127);
+			clawLockGrab();
+		});
+
+		timerRun(400, {
+			raiseArm(127);
+		});
+
+	}
+		// Drive backward, turn left, backup & dump
+	{
+		timerRun(500, {
+			driveBackward(127);
+		});
+
+		stopDriveMovement(25);
+
+		timerRun(600, {
+			driveLeft(127);
+		});
+
+		stopDriveMovement(25);
+
+		timerRun(1300, {
+			driveBackward(127);
+		});
+
+		stopDriveMovement(25);
+
+		timerRun(800, {
+			raiseArm(127);
+		});
+
+		timerRun(300, {
+			raiseArm(127);
+			openClaw(127);
+		});
+
+		stopMovement(50);
+	}
+
+
 	return;
 }
 
-//Third Pick	// 80P Vexmen 3 stars, a cube, far zone, auton push preload  knock of stars on fence
-
-// third Pick   //4863 6-8, a cube, hang 15 sec.
 void
 autonomousMode2(void)
 {
@@ -406,6 +570,77 @@ autonomousMode5(void)
 	clawUnlock();
 	driveUnlock();
 
+	timerRun(500, {
+		driveBackward(127);
+	});
+
+	stopDriveMovement(25);
+
+	timerRun(100, {
+		driveRight(127);
+	});
+
+	stopDriveMovement(25);
+
+	//unfold
+	{
+		timerRun(200, {
+			lowerArm(127);
+			openClaw(0);
+		});
+
+		stopMovement(50);
+
+		timerRun(200, {
+			raiseArm(127);
+			openClaw(0);
+		});
+
+		stopMovement(50);
+
+		timerRun(600, {
+			lowerArm(127);
+			openClaw(127);
+		});
+
+		timerRun(300, {
+			lowerArm(127);
+			armLockDown();
+			openClaw(127);
+		});
+
+		stopMovement(50);
+	}
+
+	timerRun(800 , {
+		driveForward(127);
+	});
+
+	stopDriveMovement(25);
+
+	timerRun(500, {
+		grabClaw(127);
+	});
+
+	stopMovement(50);
+{
+	timerRun(2000, {
+		driveBackward(127);
+	});
+
+	stopDriveMovement(25);
+
+	timerRun(700, {
+		raiseArm(127);
+	});
+
+	timerRun(300, {
+		raiseArm(127);
+		openClaw(127);
+	});
+
+	stopMovement(25);
+}
 	return;
 }
 
@@ -415,6 +650,45 @@ autonomousMode6(void)
 	armUnlock();
 	clawUnlock();
 	driveUnlock();
+
+	//drive backwards
+
+	timerRun(1000, {
+		driveForward(127);
+	});
+
+	stopDriveMovement(50);
+
+	//unfold
+	{
+		timerRun(200, {
+			lowerArm(127);
+			openClaw(0);
+		});
+
+		stopMovement(50);
+
+		timerRun(200, {
+			raiseArm(127);
+			openClaw(0);
+		});
+
+		stopMovement(50);
+
+		timerRun(600, {
+			lowerArm(127);
+			openClaw(127);
+		});
+
+		timerRun(250, {
+			lowerArm(127);
+			armLockDown();
+			openClaw(127);
+		});
+
+		stopMovement(50);
+	}
+
 
 	return;
 }
@@ -468,7 +742,7 @@ autonomousMode7(void)
 
 		stopMovement(50);
 
-		timerRun(1300,{
+		timerRun(1100,{
 			driveForward(127);
 		});
 
@@ -564,7 +838,7 @@ autonomousMode7(void)
 
 		stopDriveMovement(25);
 
-		timerRun(1000, {
+		timerRun(1300, {
 			driveBackward(127);
 		});
 
@@ -753,11 +1027,13 @@ autonomousMode9(void)
 	driveUnlock();
 
 	clawUnlock();
-	stopMovement(50);
-	stopDriveMovement(50);
+	stopMovement(25);
+	stopDriveMovement(25);
 
 	grabClaw(0);
 	openClaw(0);
+
+	stopMovement(75);
 
 		// unfold
 	{
@@ -798,9 +1074,11 @@ autonomousMode9(void)
 
 		clawLockOpen();
 
-		timerRun(500, {
+		timerRun(900, {
 			driveForward(127);
 		});
+
+		stopDriveMovement(50);
 
 		timerRun(100, {
 			clawLockGrab();
@@ -808,8 +1086,8 @@ autonomousMode9(void)
 
 		stopDriveMovement(100);
 	}
-		// lift halfway, drive forward, and turn right
-	{
+		// lift halfway, drive forward, and turn
+	{right
 		timerRun(300, {
 			raiseArm(60);
 		});
@@ -817,7 +1095,7 @@ autonomousMode9(void)
 		stopMovement(50);
 		raiseArm(10);
 
-		timerRun(200, {
+		timerRun(300, {
 			driveForward(127);
 		});
 
@@ -832,7 +1110,7 @@ autonomousMode9(void)
 	}
 		// backup and dump
 	{
-		timerRun(1000, {
+		timerRun(1200, {
 			driveBackward(127);
 		});
 
@@ -858,7 +1136,7 @@ autonomousMode9(void)
 
 		stopMovement(50);
 
-		timerRun(800, {
+		timerRun(1000, {
 			driveForward(127);
 		});
 
@@ -883,7 +1161,7 @@ autonomousMode9(void)
 			raiseArm(127);
 		});
 
-		timerRun(1100, {
+		timerRun(1200, {
 			driveBackward(127);
 		});
 
